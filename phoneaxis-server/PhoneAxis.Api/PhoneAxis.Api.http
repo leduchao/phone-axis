@@ -1,0 +1,6 @@
+@PhoneAxis.Api_HostAddress = http://localhost:5074
+
+GET {{PhoneAxis.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

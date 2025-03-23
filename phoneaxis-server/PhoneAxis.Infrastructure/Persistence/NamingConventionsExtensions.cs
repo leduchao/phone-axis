@@ -40,6 +40,11 @@ public static class NamingConventionsExtensions
 
     private static string ToSnakeCase(string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            return string.Empty;
+        }
+
         name = name.Replace("-", "").Replace(" ", "").Replace("__", "_");
         return RegexPatterns.SnakeCaseRegex().Replace(name, "$1_$2").ToLower();
     }

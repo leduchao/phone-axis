@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\PhoneAxis.Application\PhoneAxis.Application.csproj" />
     <ProjectReference Include="..\PhoneAxis.Domain\PhoneAxis.Domain.csproj" />
     <ProjectReference Include="..\PhoneAxis.Infrastructure\PhoneAxis.Infrastructure.csproj" />

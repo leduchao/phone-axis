@@ -12,8 +12,8 @@ using PhoneAxis.Infrastructure.Persistence;
 namespace PhoneAxis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhoneAxisDbContext))]
-    [Migration("20250323135253_InitializeDatabase")]
-    partial class InitializeDatabase
+    [Migration("20250324040452_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

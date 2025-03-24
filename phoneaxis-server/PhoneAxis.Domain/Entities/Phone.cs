@@ -15,9 +15,9 @@ public class Phone : BaseEntity
 
     public string Sku { get; set; } = string.Empty;
 
-    [ForeignKey(nameof(Category))]
     public string CategoryId { get; set; } = default!;
 
+    [ForeignKey(nameof(CategoryId))]
     public Category Category { get; set; } = default!;
 
     public string ImageUrl { get; set; } = string.Empty;

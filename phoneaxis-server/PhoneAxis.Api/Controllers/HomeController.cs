@@ -10,7 +10,7 @@ namespace PhoneAxis.Api.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return Ok("Welcome to PhoneAxis API");
+            return Ok("Welcome to PhoneAxis Home page");
         }
 
         [HttpGet]

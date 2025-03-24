@@ -12,5 +12,11 @@ namespace PhoneAxis.Api.Controllers
         {
             return Ok("Welcome to PhoneAxis API");
         }
+
+        [HttpGet]
+        public IActionResult Contact()
+        {
+            return Ok("Welcome to PhoneAxis Contact page");
+        }
     }
 }

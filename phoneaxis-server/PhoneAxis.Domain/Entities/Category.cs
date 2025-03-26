@@ -2,7 +2,9 @@
 
 public class Category : BaseEntity
 {
-    public string Description { get; set; } = string.Empty;
+    public required string CategoryName { get; set; }
 
-    public List<Phone> Phones { get; set; } = [];
+    public string? Description { get; set; }
+
+    public List<Product> Products { get; set; } = [];
 }

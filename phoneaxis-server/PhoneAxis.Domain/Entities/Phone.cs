@@ -3,24 +3,12 @@ using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Domain.Entities;
 
-public class Phone : BaseEntity
+public class Phone : Product
 {
-    public string Description { get; set; } = string.Empty;
+    public PhoneType Type { get; set; } = PhoneType.None;
 
-    public decimal Price { get; set; }
-
-    public PhoneType Type { get; set; } = PhoneType.TouchScreen;
-
-    public int Stock { get; set; }
-
-    public string Sku { get; set; } = string.Empty;
-
-    public string CategoryId { get; set; } = default!;
-
-    [ForeignKey(nameof(CategoryId))]
-    public Category Category { get; set; } = default!;
-
-    public string ImageUrl { get; set; } = string.Empty;
-
-    public bool IsFeatured { get; set; }
+    public Phone()
+    {
+        ProductType = ProductType.Phone;
+    }
 }

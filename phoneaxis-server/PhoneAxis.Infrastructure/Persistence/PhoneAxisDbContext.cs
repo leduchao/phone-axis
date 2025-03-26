@@ -5,9 +5,15 @@ namespace PhoneAxis.Infrastructure.Persistence;
 
 public class PhoneAxisDbContext(DbContextOptions<PhoneAxisDbContext> options) : DbContext(options)
 {
-    DbSet<Phone> Phones { get; set; }
+    public DbSet<Product> Products { get; set; }
 
-    DbSet<Category> Categories { get; set; }
+    public DbSet<ProductImage> ProductImages { get; set; }
+
+    public DbSet<Category> Categories { get; set; }
+
+    public DbSet<Order> Orders { get; set; }
+
+    public DbSet<OrderDetail> OrderDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

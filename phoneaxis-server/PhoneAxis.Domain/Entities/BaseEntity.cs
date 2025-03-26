@@ -4,15 +4,15 @@ namespace PhoneAxis.Domain.Entities;
 public class BaseEntity
 {
     [Key]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public required Guid Id { get; set; } = Guid.NewGuid();
 
-    public string Name { get; set; } = string.Empty;
+    public string? CreatedBy { get; set; }
 
-    public string CreatedBy { get; set; } = string.Empty;
+    public string? UpdatedBy { get; set; }
 
-    public string UpdatedBy { get; set; } = string.Empty;
-
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public DateTime UpdatedAt { get; set; }
+
+    public bool IsDeleted { get; set; } = false; // soft delete
 }

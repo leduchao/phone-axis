@@ -4,7 +4,7 @@ namespace PhoneAxis.Domain.Entities;
 public class BaseEntity
 {
     [Key]
-    public required Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     public string? CreatedBy { get; set; }
 

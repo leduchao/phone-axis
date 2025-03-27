@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhoneAxis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using PhoneAxis.Infrastructure.Persistence;
 namespace PhoneAxis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhoneAxisDbContext))]
-    partial class PhoneAxisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250327152106_InitializeEntities")]
+    partial class InitializeEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,101 +185,6 @@ namespace PhoneAxis.Infrastructure.Migrations
                         .HasName("pk_app_user_tokens");
 
                     b.ToTable("app_user_tokens", (string)null);
-                });
-
-            modelBuilder.Entity("PhoneAxis.Domain.Entities.Cart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext")
-                        .HasColumnName("created_by");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("longtext")
-                        .HasColumnName("updated_by");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_carts");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_carts_user_id");
-
-                    b.ToTable("carts");
-                });
-
-            modelBuilder.Entity("PhoneAxis.Domain.Entities.CartItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("id");
-
-                    b.Property<Guid?>("CartId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("cart_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("longtext")
-                        .HasColumnName("created_by");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("product_id");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int")
-                        .HasColumnName("quantity");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("unit_price");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("longtext")
-                        .HasColumnName("updated_by");
-
-                    b.HasKey("Id")
-                        .HasName("pk_cart_items");
-
-                    b.HasIndex("CartId")
-                        .HasDatabaseName("ix_cart_items_cart_id");
-
-                    b.HasIndex("ProductId")
-                        .HasDatabaseName("ix_cart_items_product_id");
-
-                    b.ToTable("cart_items");
                 });
 
             modelBuilder.Entity("PhoneAxis.Domain.Entities.Category", b =>
@@ -753,33 +661,6 @@ namespace PhoneAxis.Infrastructure.Migrations
                         .HasConstraintName("fk_app_user_tokens_users_user_id");
                 });
 
-            modelBuilder.Entity("PhoneAxis.Domain.Entities.Cart", b =>
-                {
-                    b.HasOne("PhoneAxis.Domain.Entities.MasterUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("fk_carts_master_users_user_id");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PhoneAxis.Domain.Entities.CartItem", b =>
-                {
-                    b.HasOne("PhoneAxis.Domain.Entities.Cart", null)
-                        .WithMany("Items")
-                        .HasForeignKey("CartId")
-                        .HasConstraintName("fk_cart_items_carts_cart_id");
-
-                    b.HasOne("PhoneAxis.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_cart_items_products_product_id");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("PhoneAxis.Domain.Entities.OrderDetail", b =>
                 {
                     b.HasOne("PhoneAxis.Domain.Entities.Order", "Order")
@@ -823,11 +704,6 @@ namespace PhoneAxis.Infrastructure.Migrations
                         .HasConstraintName("fk_product_images_products_product_id");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("PhoneAxis.Domain.Entities.Cart", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("PhoneAxis.Domain.Entities.Category", b =>

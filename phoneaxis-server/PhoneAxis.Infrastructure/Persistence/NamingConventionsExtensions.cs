@@ -38,7 +38,7 @@ public static class NamingConventionsExtensions
         }
     }
 
-    private static string ToSnakeCase(string name)
+    public static string ToSnakeCase(string? name)
     {
         if (string.IsNullOrEmpty(name))
         {

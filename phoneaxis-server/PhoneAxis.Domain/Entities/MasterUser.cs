@@ -8,7 +8,7 @@ public class MasterUser : BaseEntity
 
     public string? LastName { get; set; }
 
-    public string? ContactEmail { get; set; } = string.Empty;
+    public string? FullName => !string.IsNullOrEmpty(FirstName) && !string.IsNullOrEmpty(LastName) ? $"{FirstName} {LastName}" : FirstName;
 
-    public UserAccount UserAccount { get; set; } = null!;
+    public string? ContactEmail { get; set; } = string.Empty;
 }

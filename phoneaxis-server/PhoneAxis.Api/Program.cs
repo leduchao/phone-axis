@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using PhoneAxis.Application.DependencyInjection;
 using PhoneAxis.Infrastructure.DependencyInjection;
+using PhoneAxis.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<PhoneAxisDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -28,4 +34,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

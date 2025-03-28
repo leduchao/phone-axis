@@ -11,10 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
     <Folder Include="Features\" />
-    <Folder Include="DTOs\" />
     <Folder Include="Common\" />
+    <Folder Include="Interfaces\Repositoties\" />
   </ItemGroup>
 
   <ItemGroup>

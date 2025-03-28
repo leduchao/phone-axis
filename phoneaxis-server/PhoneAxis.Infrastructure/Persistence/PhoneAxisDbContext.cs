@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PhoneAxis.Domain.Entities;
+using PhoneAxis.Infrastructure.Models;
 
 namespace PhoneAxis.Infrastructure.Persistence;
 

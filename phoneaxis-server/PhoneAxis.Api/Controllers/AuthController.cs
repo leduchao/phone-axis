@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces.Services;
 
@@ -15,6 +14,11 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var response = await _authService.LoginAsync(request);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
         return Ok(response);
     }
 
@@ -22,6 +26,11 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<IActionResult> Signup(SignupRequest request)
     {
         var response = await _authService.SignupAsync(request);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
         return Ok(response);
     }
 }

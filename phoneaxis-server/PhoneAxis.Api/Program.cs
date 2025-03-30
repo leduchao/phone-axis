@@ -19,7 +19,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
+builder.Services
+    .AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+    {
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
     .AddEntityFrameworkStores<PhoneAxisDbContext>()
     .AddDefaultTokenProviders();
 

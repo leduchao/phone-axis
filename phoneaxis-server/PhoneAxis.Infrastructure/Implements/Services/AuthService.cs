@@ -42,7 +42,7 @@ public class AuthService(
         var isValidRequest = CheckValidAuthRequest(request);
         if (!isValidRequest.Item1)
         {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, isValidRequest.Item2);
+            return AuthResponse.GetFailureResponse(StatusCodes.Status400BadRequest, isValidRequest.Item2);
         }
 
         var appUser = string.IsNullOrEmpty(request.Email) 
@@ -56,7 +56,7 @@ public class AuthService(
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, request.Password, false);
         if (!result.Succeeded)
         {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status403Forbidden, "Password is incorrect");
+            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, "Password is incorrect");
         }
 
         var accessToken = GenerateJwtToken(appUser);
@@ -73,7 +73,7 @@ public class AuthService(
         var isValidRequest = CheckValidAuthRequest(request);
         if (!isValidRequest.Item1)
         {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, isValidRequest.Item2);
+            return AuthResponse.GetFailureResponse(StatusCodes.Status400BadRequest, isValidRequest.Item2);
         }
 
         if (!string.IsNullOrEmpty(request.Email))
@@ -107,7 +107,7 @@ public class AuthService(
         if (!result.Succeeded)
         {
             var errors = string.Join(Environment.NewLine, result.Errors.Select(e => e.Description));
-            return AuthResponse.GetFailureResponse(StatusCodes.Status400BadRequest, errors);
+            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, errors);
         }
 
         _dbContext.MasterUsers.Add(masterUser);

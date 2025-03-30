@@ -1,22 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace PhoneAxis.Api.Controllers
+namespace PhoneAxis.Api.Controllers;
+
+[Route("api/home")]
+[ApiController]
+public class HomeController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class HomeController : ControllerBase
+    [HttpGet("index")]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    public IActionResult Index()
     {
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return Ok("Welcome to PhoneAxis Home page");
-        }
+        return Ok("Welcome to PhoneAxis Home page");
+    }
 
-        [HttpGet]
-        public IActionResult Contact()
-        {
-            return Ok("Welcome to PhoneAxis Contact page");
-        }
+    [HttpGet("contact")]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    public IActionResult Contact()
+    {
+        return Ok("Welcome to PhoneAxis Contact page");
     }
 }

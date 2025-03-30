@@ -39,13 +39,15 @@ public class AuthService(
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        if (string.IsNullOrEmpty(request.Email) && string.IsNullOrEmpty(request.UserName))
-            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, "Email or user name is required");
+        var isValidRequest = CheckValidAuthRequest(request);
+        if (!isValidRequest.Item1)
+        {
+            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, isValidRequest.Item2);
+        }
 
         var appUser = string.IsNullOrEmpty(request.Email) 
             ? await _userManager.FindByNameAsync(request.UserName ?? "no_name_user") 
             : await _userManager.FindByEmailAsync(request.Email);
-
         if (appUser is null)
         {
             return AuthResponse.GetFailureResponse(StatusCodes.Status404NotFound, "Your email or user name is not correct");
@@ -54,7 +56,7 @@ public class AuthService(
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, request.Password, false);
         if (!result.Succeeded)
         {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status403Forbidden, "Invalid password");
+            return AuthResponse.GetFailureResponse(StatusCodes.Status403Forbidden, "Password is incorrect");
         }
 
         var accessToken = GenerateJwtToken(appUser);
@@ -68,7 +70,22 @@ public class AuthService(
 
     public async Task<AuthResponse> SignupAsync(SignupRequest request)
     {
-        var userId = Guid.NewGuid();
+        var isValidRequest = CheckValidAuthRequest(request);
+        if (!isValidRequest.Item1)
+        {
+            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, isValidRequest.Item2);
+        }
+
+        if (!string.IsNullOrEmpty(request.Email))
+        {
+            var existedUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existedUser is not null)
+            {
+                return AuthResponse.GetFailureResponse(StatusCodes.Status400BadRequest, $"User with email '{request.Email}' is existed");
+            }
+        }
+
+        var userId = Guid.NewGuid(); // create a same id for both master user and app user
 
         var masterUser = new MasterUser
         {
@@ -119,5 +136,20 @@ public class AuthService(
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private static (bool, string) CheckValidAuthRequest(AuthRequest request)
+    {
+        if (string.IsNullOrEmpty(request.Email) && string.IsNullOrEmpty(request.UserName))
+        {
+            return (false, "Email or user name is required");
+        }
+
+        if (string.IsNullOrEmpty(request.Password))
+        {
+            return (false, "Password is required");
+        }
+
+        return (true, string.Empty);
     }
 }

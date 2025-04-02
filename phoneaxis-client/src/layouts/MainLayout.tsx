@@ -7,22 +7,24 @@ import React from 'react'
 
 const layoutStyle: React.CSSProperties = {
   height: '100vh',
-  // padding: '10px',
-  // gap: '10px',
-  // backgroundColor: 'rgb(165, 165, 165)'
 }
 
 const siderStyle: React.CSSProperties = {
-  //width: '200px',
   padding: '5px 5px',
-  // borderRadius: '8px',
-  // backgroundColor: 'black'
+  overflow: 'auto',
+  height: '100vh',
+  position: 'fixed',
+  insetInlineStart: 0,
+  top: 64,
+  bottom: 0,
+  // scrollbarWidth: 'thin',
+  // scrollbarGutter: 'stable',
 }
 
 const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
+  alignItems: 'center',
   backgroundColor: 'white',
   boxShadow: '0 0 4px gray',
   position: 'fixed',
@@ -31,10 +33,9 @@ const headerStyle: React.CSSProperties = {
 
 const contentStyle: React.CSSProperties = {
   backgroundColor: 'white',
-  margin: '10px 10px 10px',
+  margin: '20px 20px 10px',
   padding: '10px',
   borderRadius: '3px',
-  // boxShadow: '10px 10px 5px lightblue'
 }
 
 const footerStyle: React.CSSProperties = {
@@ -44,14 +45,45 @@ const footerStyle: React.CSSProperties = {
 const MainLayout = () => {
   return (
     <Layout style={layoutStyle}>
-      <Header style={headerStyle}>Header</Header>
-      <Layout style={{marginTop: '64px'}}>
+      <Header style={headerStyle}>
+        <div>Logo</div>
+        <div style={{ width: '30%', display: 'flex', justifyContent: '' }}>
+          <Menu mode="horizontal" defaultSelectedKeys={['1']}
+            items={[
+              {
+                key: '1',
+                label: "Home",
+              },
+              {
+                key: '2',
+                label: "Shop",
+              },
+              {
+                key: '3',
+                label: "Login",
+              },
+            ]}
+            style={{ display: '', justifyContent: 'flex-end', width: '100%' }}
+          />
+          {/* <Menu mode="horizontal" defaultSelectedKeys={['']}
+            items={[
+              {
+                key: '5',
+                label: "Login",
+              },
+              {
+                key: '6',
+                label: "Sign Up",
+              },
+            ]}
+            style={{ display: 'flex', justifyContent: 'flex-end', width: '50%' }}
+          /> */}
+        </div>
+      </Header>
+      <Layout style={{ marginTop: '64px' }}>
         <Sider style={siderStyle}>
           <div className="demo-logo-vertical" />
-          <Menu
-            theme='dark'
-            mode='inline'
-            defaultSelectedKeys={['1']}
+          <Menu theme='dark' mode='inline' defaultSelectedKeys={['1']}
             items={[
               {
                 key: '1',
@@ -71,13 +103,12 @@ const MainLayout = () => {
             ]}
           />
         </Sider>
-        <Layout style={{backgroundColor: ''}}>
-          <Content style={contentStyle}>
-            <Breadcrumb
-              items={[{ title: 'Home' }, { title: 'List' }, { title: 'App' }]}
-              style={{ backgroundColor: 'white', borderRadius: '8px' }}
-            />
-          </Content>
+        <Layout style={{ backgroundColor: 'linen', height: '1500px', marginLeft: '200px' }}>
+          <Breadcrumb
+            items={[{ title: 'Home' }, { title: 'List' }, { title: 'App' }]}
+            style={{ margin: '20px 20px 0', borderRadius: '8px' }}
+          />
+          <Content style={contentStyle}></Content>
           <Footer style={footerStyle}>Footer</Footer>
         </Layout>
       </Layout>

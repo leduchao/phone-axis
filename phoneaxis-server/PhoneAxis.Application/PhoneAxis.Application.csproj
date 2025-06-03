@@ -13,7 +13,7 @@
   <ItemGroup>
     <Folder Include="Features\" />
     <Folder Include="Common\" />
-    <Folder Include="Interfaces\Repositoties\" />
+    <Folder Include="Interfaces\Repositories\" />
   </ItemGroup>
 
   <ItemGroup>

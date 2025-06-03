@@ -10,11 +10,11 @@ public class AuthController(IAuthService authService) : ControllerBase
 {
     private readonly IAuthService _authService = authService;
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest request)
+    [HttpPost("sign-in")]
+    public async Task<IActionResult> SignIn(SignInRequest request)
     {
-        var response = await _authService.LoginAsync(request);
-        if (!response.Success)
+        var response = await _authService.SignInAsync(request);
+        if (!response.AuthResult)
         {
             return BadRequest(response);
         }
@@ -22,11 +22,11 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("signup")]
-    public async Task<IActionResult> Signup(SignupRequest request)
+    [HttpPost("sign-up")]
+    public async Task<IActionResult> SignUp(SignUpRequest request)
     {
-        var response = await _authService.SignupAsync(request);
-        if (!response.Success)
+        var response = await _authService.SignUpAsync(request);
+        if (!response.AuthResult)
         {
             return BadRequest(response);
         }

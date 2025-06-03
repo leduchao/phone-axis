@@ -1,39 +1,27 @@
 ﻿namespace PhoneAxis.Application.DTOs.Auth;
 
-public class AuthResponse
+public class AuthResponse(int statusCode, string message = "") : BaseResponse(statusCode, message)
 {
-    public int Code { get; set; }
-
-    public string? Message { get; set; }
-
     public string? AccessToken { get; set; }
 
-    public bool Success { get; set; }
+    public bool AuthResult { get; set; }
 
-    public AuthResponse()
+    public static AuthResponse Success(int statusCode, string message = "", string accessToken = "")
     {
-        
-    }
-
-    public static AuthResponse GetSuccessResponse(int code, string accessToken = "", string message = "")
-    {
-        return new AuthResponse
+        return new AuthResponse(statusCode, message)
         {
-            Code = code,
-            Message = message,
-            AccessToken = accessToken,
-            Success = true
+            AuthResult = true,
+            AccessToken = accessToken
         };
     }
 
-    public static AuthResponse GetFailureResponse(int code, string errors)
+    public static AuthResponse Fail(int code, string[] errors)
     {
-        return new AuthResponse
+        return new AuthResponse(code, string.Empty)
         {
-            Code = code,
-            Message = errors,
-            AccessToken = string.Empty,
-            Success = false
+            Errors = errors,
+            AuthResult = false,
+            AccessToken = string.Empty
         };
     }
 }

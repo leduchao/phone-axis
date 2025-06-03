@@ -1,4 +1,4 @@
-﻿namespace PhoneAxis.Application.Models;
+﻿namespace PhoneAxis.Application.DTOs;
 
 public class BaseModel
 {

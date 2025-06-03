@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Entities;
 using PhoneAxis.Infrastructure.Models;
 using PhoneAxis.Infrastructure.Persistence;
+using PhoneAxis.Infrastructure.Utils;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -37,52 +39,42 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<AuthResponse> LoginAsync(LoginRequest request)
+    public async Task<AuthResponse> SignInAsync(SignInRequest request)
     {
-        var isValidRequest = CheckValidAuthRequest(request);
-        if (!isValidRequest.Item1)
-        {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status400BadRequest, isValidRequest.Item2);
-        }
+        var isValidRequest = ValidateAuthRequest(request);
+        if (!isValidRequest.Item1) 
+            return AuthResponse.Fail(StatusCodes.Status400BadRequest, [isValidRequest.Item2]);
 
         var appUser = string.IsNullOrEmpty(request.Email) 
-            ? await _userManager.FindByNameAsync(request.UserName ?? "no_name_user") 
+            ? await _userManager.FindByNameAsync(request.UserName ?? AuthConstant.UnknownUser) 
             : await _userManager.FindByEmailAsync(request.Email);
-        if (appUser is null)
-        {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status404NotFound, "Your email or user name is not correct");
-        }
+        if (appUser is null) 
+            return AuthResponse.Fail(StatusCodes.Status404NotFound, [AuthMessageConstant.InvalidCredentials]);
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, request.Password, false);
-        if (!result.Succeeded)
-        {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, "Password is incorrect");
-        }
+        if (!result.Succeeded) 
+            return AuthResponse.Fail(StatusCodes.Status401Unauthorized, [AuthMessageConstant.InvalidPassword]);
 
         var accessToken = GenerateJwtToken(appUser);
-        return AuthResponse.GetSuccessResponse(StatusCodes.Status200OK, accessToken, "Login successfully");
+        return AuthResponse.Success(StatusCodes.Status200OK, AuthMessageConstant.SignInSuccess, accessToken);
     }
 
-    public Task LogoutAsync()
+    public Task SignOutAsync()
     {
         throw new NotImplementedException();
     }
 
-    public async Task<AuthResponse> SignupAsync(SignupRequest request)
+    public async Task<AuthResponse> SignUpAsync(SignUpRequest request)
     {
-        var isValidRequest = CheckValidAuthRequest(request);
-        if (!isValidRequest.Item1)
-        {
-            return AuthResponse.GetFailureResponse(StatusCodes.Status400BadRequest, isValidRequest.Item2);
-        }
+        var isValidRequest = ValidateAuthRequest(request);
+        if (!isValidRequest.Item1) 
+            return AuthResponse.Fail(StatusCodes.Status400BadRequest, [isValidRequest.Item2]);
 
         if (!string.IsNullOrEmpty(request.Email))
         {
             var existedUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existedUser is not null)
-            {
-                return AuthResponse.GetFailureResponse(StatusCodes.Status400BadRequest, $"User with email '{request.Email}' is existed");
-            }
+            if (existedUser is not null) 
+                return AuthResponse.Fail(StatusCodes.Status400BadRequest, [AuthMessageConstant.UserAlreadyExists]);
         }
 
         var userId = Guid.NewGuid(); // create a same id for both master user and app user
@@ -91,7 +83,7 @@ public class AuthService(
         {
             Id = userId,
             UserName = request.UserName,
-            FirstName = request.FirstName,
+            FirstName = string.IsNullOrWhiteSpace(request.FirstName) ? AuthUtils.GenerateRandomUsername() : request.FirstName,
             LastName = request.LastName,
             ContactEmail = request.Email
         };
@@ -106,14 +98,14 @@ public class AuthService(
         var result = await _userManager.CreateAsync(appUser, request.Password);
         if (!result.Succeeded)
         {
-            var errors = string.Join(Environment.NewLine, result.Errors.Select(e => e.Description));
-            return AuthResponse.GetFailureResponse(StatusCodes.Status401Unauthorized, errors);
+            var errors = result.Errors.Select(e => e.Description).ToArray();
+            return AuthResponse.Fail(StatusCodes.Status401Unauthorized, errors);
         }
 
         _dbContext.MasterUsers.Add(masterUser);
         await _dbContext.SaveChangesAsync();
 
-        return AuthResponse.GetSuccessResponse(StatusCodes.Status201Created, string.Empty, "Register account successfully");
+        return AuthResponse.Success(StatusCodes.Status201Created, string.Empty, AuthMessageConstant.SignUpSuccess);
     }
 
     private string GenerateJwtToken(AppUser user)
@@ -138,16 +130,16 @@ public class AuthService(
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private static (bool, string) CheckValidAuthRequest(AuthRequest request)
+    private static (bool, string) ValidateAuthRequest(AuthRequest request)
     {
         if (string.IsNullOrEmpty(request.Email) && string.IsNullOrEmpty(request.UserName))
         {
-            return (false, "Email or user name is required");
+            return (false, AuthMessageConstant.CredentialsRequired);
         }
 
         if (string.IsNullOrEmpty(request.Password))
         {
-            return (false, "Password is required");
+            return (false, AuthMessageConstant.PasswordRequired);
         }
 
         return (true, string.Empty);

@@ -4,11 +4,11 @@ namespace PhoneAxis.Application.Interfaces.Services;
 
 public interface IAuthService
 {
-    Task<AuthResponse> SignupAsync(SignupRequest request);
+    Task<AuthResponse> SignUpAsync(SignUpRequest request);
 
-    Task<AuthResponse> LoginAsync(LoginRequest request);
+    Task<AuthResponse> SignInAsync(SignInRequest request);
 
-    Task LogoutAsync();
+    Task SignOutAsync();
 
     Task<bool> ConfirmPasswordAsync(Guid userId);
     

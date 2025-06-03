@@ -1,22 +1,17 @@
-﻿namespace PhoneAxis.Application.DTOs.Auth;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class AuthRequest
+namespace PhoneAxis.Application.DTOs.Auth;
+
+public class AuthRequest(string? userName, string? email, string password)
 {
-    public string? UserName { get; set; }
+    [MinLength(5)]
+    public string? UserName { get; set; } = userName;
 
-    public string? Email { get; set; }
+    [MinLength(5)]
+    [EmailAddress]
+    public string? Email { get; set; } = email;
 
-    public string Password { get; set; } = string.Empty;
-
-    public AuthRequest()
-    {
-        
-    }
-
-    public AuthRequest(string? userName, string? email, string password)
-    {
-        UserName = userName;
-        Email = email;
-        Password = password;
-    }
+    [Required]
+    [MinLength(6)]
+    public string Password { get; set; } = password;
 }

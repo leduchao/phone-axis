@@ -1,8 +1,9 @@
 ﻿using PhoneAxis.Application.DTOs.Auth;
+using PhoneAxis.Domain.Entities;
 
 namespace PhoneAxis.Application.Interfaces.Services;
 
-public interface IAuthService
+public interface IAuthService : IBaseService<MasterUser>
 {
     Task<AuthResponse> SignUpAsync(SignUpRequest request);
 

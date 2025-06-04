@@ -1,12 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PhoneAxis.Domain.Entities;
+using System.Linq.Expressions;
 
-namespace PhoneAxis.Application.Interfaces.Services
+namespace PhoneAxis.Application.Interfaces.Services;
+
+public interface IBaseService<T> where T : BaseEntity
 {
-    interface IBaseService
-    {
-    }
+    Task<T> GetByIdAsync(Guid id);
+
+    Task<T> GetFirstByConditionAsync(Expression<Func<T, bool>> condition);
+
+    Task<IEnumerable<T>> GetAllAsync(bool includeDeleted = false);
+
+    Task<IEnumerable<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> condition);
+
+    //Task<(IEnumerable<T> items, int totalCount)> GetPagedAsync(
+    //    int pageIndex, int pageSize,
+    //    Expression<Func<T, bool>> filter = null,
+    //    Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null);
+
+    Task AddAsync(T entity);
+
+    Task AddRangeAsync(IEnumerable<T> entities);
+
+    void Update(T entity);
+
+    void UpdateRange(IEnumerable<T> entities);
+
+    void Remove(T entity);
+
+    void RemoveRange(IEnumerable<T> entities);
 }

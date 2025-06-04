@@ -4,10 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
+using PhoneAxis.Application.Interfaces;
+using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Entities;
 using PhoneAxis.Infrastructure.Models;
-using PhoneAxis.Infrastructure.Persistence;
 using PhoneAxis.Infrastructure.Utils;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,13 +17,16 @@ using System.Text;
 namespace PhoneAxis.Infrastructure.Implements.Services;
 
 public class AuthService(
-    UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, 
-    PhoneAxisDbContext dbContext, IConfiguration configuration) : IAuthService
+    UserManager<AppUser> userManager, 
+    SignInManager<AppUser> signInManager, 
+    IConfiguration configuration, 
+    IBaseRepository<MasterUser> masterUserRepo, 
+    IUnitOfWork unitOfWork) : BaseService<MasterUser>(masterUserRepo), IAuthService
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly SignInManager<AppUser> _signInManager = signInManager;
-    private readonly PhoneAxisDbContext _dbContext = dbContext;
     private readonly IConfiguration _configuration = configuration;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public Task<bool> ConfirmEmailAsync(string email)
     {
@@ -42,17 +46,17 @@ public class AuthService(
     public async Task<AuthResponse> SignInAsync(SignInRequest request)
     {
         var isValidRequest = ValidateAuthRequest(request);
-        if (!isValidRequest.Item1) 
+        if (!isValidRequest.Item1)
             return AuthResponse.Fail(StatusCodes.Status400BadRequest, [isValidRequest.Item2]);
 
-        var appUser = string.IsNullOrEmpty(request.Email) 
-            ? await _userManager.FindByNameAsync(request.UserName ?? AuthConstant.UnknownUser) 
+        var appUser = string.IsNullOrEmpty(request.Email)
+            ? await _userManager.FindByNameAsync(request.UserName ?? AuthConstant.UnknownUser)
             : await _userManager.FindByEmailAsync(request.Email);
-        if (appUser is null) 
+        if (appUser is null)
             return AuthResponse.Fail(StatusCodes.Status404NotFound, [AuthMessageConstant.InvalidCredentials]);
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, request.Password, false);
-        if (!result.Succeeded) 
+        if (!result.Succeeded)
             return AuthResponse.Fail(StatusCodes.Status401Unauthorized, [AuthMessageConstant.InvalidPassword]);
 
         var accessToken = GenerateJwtToken(appUser);
@@ -67,13 +71,13 @@ public class AuthService(
     public async Task<AuthResponse> SignUpAsync(SignUpRequest request)
     {
         var isValidRequest = ValidateAuthRequest(request);
-        if (!isValidRequest.Item1) 
+        if (!isValidRequest.Item1)
             return AuthResponse.Fail(StatusCodes.Status400BadRequest, [isValidRequest.Item2]);
 
         if (!string.IsNullOrEmpty(request.Email))
         {
             var existedUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existedUser is not null) 
+            if (existedUser is not null)
                 return AuthResponse.Fail(StatusCodes.Status400BadRequest, [AuthMessageConstant.UserAlreadyExists]);
         }
 
@@ -102,8 +106,8 @@ public class AuthService(
             return AuthResponse.Fail(StatusCodes.Status401Unauthorized, errors);
         }
 
-        _dbContext.MasterUsers.Add(masterUser);
-        await _dbContext.SaveChangesAsync();
+        await AddAsync(masterUser);
+        await _unitOfWork.SaveChangesAsync();
 
         return AuthResponse.Success(StatusCodes.Status201Created, AuthMessageConstant.SignUpSuccess, string.Empty);
     }

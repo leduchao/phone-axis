@@ -105,7 +105,7 @@ public class AuthService(
         _dbContext.MasterUsers.Add(masterUser);
         await _dbContext.SaveChangesAsync();
 
-        return AuthResponse.Success(StatusCodes.Status201Created, string.Empty, AuthMessageConstant.SignUpSuccess);
+        return AuthResponse.Success(StatusCodes.Status201Created, AuthMessageConstant.SignUpSuccess, string.Empty);
     }
 
     private string GenerateJwtToken(AppUser user)

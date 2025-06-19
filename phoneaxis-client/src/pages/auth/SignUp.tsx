@@ -13,21 +13,22 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
-import { ROUTES } from "../routes";
-import { useNavigate } from "react-router";
+import { ROUTES } from "../../routes";
 
-function SignIn() {
-  const navigate = useNavigate();
+function SignUp() {
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [nameError, setNameError] = useState(false);
+  const [nameErrorMessage, setNameErrorMessage] = useState("");
 
   const validateInputs = () => {
     const email = document.getElementById("email") as HTMLInputElement | null;
     const password = document.getElementById(
       "password"
     ) as HTMLInputElement | null;
+    const name = document.getElementById("name") as HTMLInputElement | null;
 
     let isValid = true;
 
@@ -49,21 +50,30 @@ function SignIn() {
       setPasswordErrorMessage("");
     }
 
+    if (!name || !name.value || name.value.length < 1) {
+      setNameError(true);
+      setNameErrorMessage("Name is required.");
+      isValid = false;
+    } else {
+      setNameError(false);
+      setNameErrorMessage("");
+    }
+
     return isValid;
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
+    if (nameError || emailError || passwordError) {
       event.preventDefault();
       return;
     }
     const data = new FormData(event.currentTarget);
     console.log({
+      name: data.get("name"),
+      lastName: data.get("lastName"),
       email: data.get("email"),
       password: data.get("password"),
     });
-
-    navigate(ROUTES.Home);
   };
 
   return (
@@ -88,13 +98,27 @@ function SignIn() {
               textAlign: "center",
             }}
           >
-            Sign in
+            Sign up
           </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
+            <FormControl>
+              <TextField
+                label="Full name"
+                autoComplete="name"
+                name="name"
+                required
+                fullWidth
+                id="name"
+                placeholder="Your name"
+                error={nameError}
+                helperText={nameErrorMessage}
+                color={nameError ? "error" : "primary"}
+              />
+            </FormControl>
             <FormControl>
               <TextField
                 label="Email"
@@ -128,7 +152,7 @@ function SignIn() {
             </FormControl>
             <FormControlLabel
               control={<Checkbox value="allowExtraEmails" color="primary" />}
-              label="Remember me"
+              label="I want to receive updates via email."
             />
             <Button
               type="submit"
@@ -136,24 +160,10 @@ function SignIn() {
               variant="contained"
               onClick={validateInputs}
             >
-              Sign in
+              Sign up
             </Button>
-            <Link
-              component="button"
-              type="button"
-              // onClick={handleClickOpen}
-              variant="body2"
-              sx={{
-                alignSelf: "center",
-                textDecoration: "none",
-                fontSize: "1rem",
-                margin: "10px 0",
-              }}
-            >
-              Forgot your password?
-            </Link>
           </Box>
-          <Divider sx={{ marginBottom: "10px" }}>
+          <Divider sx={{ margin: "10px 0" }}>
             <Typography sx={{ color: "text.secondary" }}>or</Typography>
           </Divider>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -166,12 +176,12 @@ function SignIn() {
               Sign up with Google
             </Button>
             <Typography sx={{ textAlign: "center" }}>
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link
-                href={ROUTES.SignUp}
+                href={ROUTES.SignIn}
                 sx={{ alignSelf: "center", fontSize: "1rem" }}
               >
-                Sign up
+                Sign in
               </Link>
             </Typography>
           </Box>
@@ -181,4 +191,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default SignUp;

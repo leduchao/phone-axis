@@ -14,8 +14,10 @@ import {
 import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { ROUTES } from "../routes";
+import { useNavigate } from "react-router";
 
 function SignIn() {
+  const navigate = useNavigate();
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -60,6 +62,8 @@ function SignIn() {
       email: data.get("email"),
       password: data.get("password"),
     });
+
+    navigate(ROUTES.Home);
   };
 
   return (
@@ -134,8 +138,22 @@ function SignIn() {
             >
               Sign in
             </Button>
+            <Link
+              component="button"
+              type="button"
+              // onClick={handleClickOpen}
+              variant="body2"
+              sx={{
+                alignSelf: "center",
+                textDecoration: "none",
+                fontSize: "1rem",
+                margin: "10px 0",
+              }}
+            >
+              Forgot your password?
+            </Link>
           </Box>
-          <Divider>
+          <Divider sx={{ marginBottom: "10px" }}>
             <Typography sx={{ color: "text.secondary" }}>or</Typography>
           </Divider>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

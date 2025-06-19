@@ -163,7 +163,7 @@ function SignUp() {
               Sign up
             </Button>
           </Box>
-          <Divider>
+          <Divider sx={{ margin: "10px 0" }}>
             <Typography sx={{ color: "text.secondary" }}>or</Typography>
           </Divider>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

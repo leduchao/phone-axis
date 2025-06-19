@@ -1,7 +1,13 @@
+import { Typography } from "@mui/material";
+
 function Header() {
   return (
     <div style={{ height: "100%", backgroundColor: "red" }}>
-      <h1>Header</h1>
+      <header>
+        <Typography style={{ fontWeight: "" }} variant="h2">
+          Header
+        </Typography>
+      </header>
     </div>
   );
 }

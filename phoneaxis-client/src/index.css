@@ -4,3 +4,7 @@ body {
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
 }
+
+:root {
+  --main-color: #1976D2;
+}

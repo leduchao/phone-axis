@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces.Services;
 
 namespace PhoneAxis.Api.Controllers;
 
+[AllowAnonymous]
 [Route("api/auth")]
 [ApiController]
 public class AuthController(IAuthService authService) : ControllerBase

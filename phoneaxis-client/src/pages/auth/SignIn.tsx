@@ -15,6 +15,8 @@ import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router";
+import { AuthApi } from "../../apis/auth.api";
+import { SignInRequest } from "../../interfaces/auth.interface";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -22,6 +24,21 @@ function SignIn() {
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+    const { name, value, checked, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   const validateInputs = () => {
     const email = document.getElementById("email") as HTMLInputElement | null;
@@ -52,18 +69,26 @@ function SignIn() {
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     if (emailError || passwordError) {
-      event.preventDefault();
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
 
+    // try {
+    const request: SignInRequest = {
+      email: formData.email,
+      password: formData.password,
+      rememberMe: formData.rememberMe,
+    };
+
+    const data = await AuthApi.signIn(request);
+    console.log(data);
     navigate(ROUTES.Home);
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   return (
@@ -105,6 +130,7 @@ function SignIn() {
                 name="email"
                 autoComplete="email"
                 variant="outlined"
+                onChange={handleChange}
                 error={emailError}
                 helperText={emailErrorMessage}
                 color={passwordError ? "error" : "primary"}
@@ -121,13 +147,21 @@ function SignIn() {
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
+                onChange={handleChange}
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
             <FormControlLabel
-              control={<Checkbox value="allowExtraEmails" color="primary" />}
+              control={
+                <Checkbox
+                  name="rememberMe"
+                  checked={formData.rememberMe}
+                  onChange={handleChange}
+                  color="primary"
+                />
+              }
               label="Remember me"
             />
             <Button
@@ -141,7 +175,6 @@ function SignIn() {
             <Link
               component="button"
               type="button"
-              // onClick={handleClickOpen}
               variant="body2"
               sx={{
                 alignSelf: "center",

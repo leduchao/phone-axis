@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PhoneAxis.Application.Commands.Auth.SignIn;
+using PhoneAxis.Application.Commands.Auth.SignUp;
 using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces;
@@ -43,19 +45,13 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<AuthResponse> SignInAsync(SignInRequest request)
+    public async Task<AuthResponse> SignInAsync(SignInCommand command)
     {
-        var isValidRequest = ValidateAuthRequest(request);
-        if (!isValidRequest.Item1)
-            return AuthResponse.Fail(StatusCodes.Status400BadRequest, [isValidRequest.Item2]);
-
-        var appUser = string.IsNullOrEmpty(request.Email)
-            ? await _userManager.FindByNameAsync(request.UserName ?? AuthConstant.UnknownUser)
-            : await _userManager.FindByEmailAsync(request.Email);
+        var appUser = await _userManager.FindByEmailAsync(command.Email);
         if (appUser is null)
             return AuthResponse.Fail(StatusCodes.Status404NotFound, [AuthMessageConstant.InvalidCredentials]);
 
-        var result = await _signInManager.CheckPasswordSignInAsync(appUser, request.Password, false);
+        var result = await _signInManager.CheckPasswordSignInAsync(appUser, command.Password, false);
         if (!result.Succeeded)
             return AuthResponse.Fail(StatusCodes.Status401Unauthorized, [AuthMessageConstant.InvalidPassword]);
 
@@ -68,38 +64,18 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<AuthResponse> SignUpAsync(SignUpRequest request)
+    public async Task<AuthResponse> SignUpAsync(SignUpCommand command)
     {
-        var isValidRequest = ValidateAuthRequest(request);
-        if (!isValidRequest.Item1)
-            return AuthResponse.Fail(StatusCodes.Status400BadRequest, [isValidRequest.Item2]);
-
-        if (!string.IsNullOrEmpty(request.Email))
+        if (!string.IsNullOrEmpty(command.Email))
         {
-            var existedUser = await _userManager.FindByEmailAsync(request.Email);
+            var existedUser = await _userManager.FindByEmailAsync(command.Email);
             if (existedUser is not null)
                 return AuthResponse.Fail(StatusCodes.Status400BadRequest, [AuthMessageConstant.UserAlreadyExists]);
         }
 
-        var userId = Guid.NewGuid(); // create a same id for both master user and app user
+        var (masterUser, appUser) = GenerateBothTypesOfUser(command);
 
-        var masterUser = new MasterUser
-        {
-            Id = userId,
-            UserName = request.UserName,
-            FirstName = string.IsNullOrWhiteSpace(request.FirstName) ? AuthUtils.GenerateRandomUsername() : request.FirstName,
-            LastName = request.LastName,
-            ContactEmail = request.Email
-        };
-
-        var appUser = new AppUser
-        {
-            Id = userId,
-            Email = request.Email,
-            UserName = request.UserName
-        };
-
-        var result = await _userManager.CreateAsync(appUser, request.Password);
+        var result = await _userManager.CreateAsync(appUser, command.Password);
         if (!result.Succeeded)
         {
             var errors = result.Errors.Select(e => e.Description).ToArray();
@@ -134,18 +110,26 @@ public class AuthService(
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private static (bool, string) ValidateAuthRequest(AuthRequest request)
+    private static (MasterUser, AppUser) GenerateBothTypesOfUser(SignUpCommand command)
     {
-        if (string.IsNullOrEmpty(request.Email) && string.IsNullOrEmpty(request.UserName))
-        {
-            return (false, AuthMessageConstant.CredentialsRequired);
-        }
+        var userId = Guid.NewGuid(); // create a same id for both master user and app user
+        var userName = AuthUtils.GenerateUserNameFromEmail(command.Email); // create user name from email
 
-        if (string.IsNullOrEmpty(request.Password))
+        var masterUser = new MasterUser
         {
-            return (false, AuthMessageConstant.PasswordRequired);
-        }
+            Id = userId,
+            UserName = userName,
+            FirstName = string.IsNullOrWhiteSpace(command.FirstName) ? AuthUtils.GenerateRandomUsername() : command.FirstName,
+            ContactEmail = command.Email
+        };
 
-        return (true, string.Empty);
+        var appUser = new AppUser
+        {
+            Id = userId,
+            UserName = userName,
+            Email = command.Email
+        };
+
+        return (masterUser, appUser);
     }
 }

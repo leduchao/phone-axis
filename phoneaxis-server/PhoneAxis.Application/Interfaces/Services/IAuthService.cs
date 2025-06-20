@@ -1,13 +1,15 @@
-﻿using PhoneAxis.Application.DTOs.Auth;
+﻿using PhoneAxis.Application.Commands.Auth.SignIn;
+using PhoneAxis.Application.Commands.Auth.SignUp;
+using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Domain.Entities;
 
 namespace PhoneAxis.Application.Interfaces.Services;
 
 public interface IAuthService : IBaseService<MasterUser>
 {
-    Task<AuthResponse> SignUpAsync(SignUpRequest request);
+    Task<AuthResponse> SignUpAsync(SignUpCommand command);
 
-    Task<AuthResponse> SignInAsync(SignInRequest request);
+    Task<AuthResponse> SignInAsync(SignInCommand command);
 
     Task SignOutAsync();
 

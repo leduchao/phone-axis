@@ -6,4 +6,9 @@ public static class AuthUtils
     {
         return $"User{DateTime.Now:yyyyMMddHHmmssfff}";
     }
+
+    public static string GenerateUserNameFromEmail(string email)
+    {
+        return email.Split('@')[0];
+    }
 }

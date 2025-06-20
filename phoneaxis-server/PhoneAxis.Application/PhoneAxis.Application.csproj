@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\Repositories\" />
+    <Folder Include="Queries\" />
   </ItemGroup>
 
   <ItemGroup>

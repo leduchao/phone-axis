@@ -20,10 +20,10 @@ using System.Text;
 namespace PhoneAxis.Infrastructure.Implements.Services;
 
 public class AuthService(
-    UserManager<AppUser> userManager, 
-    SignInManager<AppUser> signInManager, 
-    IConfiguration configuration, 
-    IBaseRepository<MasterUser> masterUserRepo, 
+    UserManager<AppUser> userManager,
+    SignInManager<AppUser> signInManager,
+    IConfiguration configuration,
+    IBaseRepository<MasterUser> masterUserRepo,
     IUnitOfWork unitOfWork) : BaseService<MasterUser>(masterUserRepo), IAuthService
 {
     private readonly UserManager<AppUser> _userManager = userManager;
@@ -46,18 +46,18 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<Result<AuthDto>> SignInAsync(SignInCommand command)
+    public async Task<Result<SignInResponse>> SignInAsync(SignInCommand command)
     {
         var appUser = await _userManager.FindByEmailAsync(command.Email);
         if (appUser is null)
-            return Result<AuthDto>.Fail([AuthMessageConstant.InvalidCredentials], StatusCodes.Status404NotFound);
+            return Result<SignInResponse>.Fail([AuthMessageConstant.InvalidCredentials], StatusCodes.Status404NotFound);
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, command.Password, false);
         if (!result.Succeeded)
-            return Result<AuthDto>.Fail([AuthMessageConstant.InvalidPassword], StatusCodes.Status401Unauthorized);
+            return Result<SignInResponse>.Fail([AuthMessageConstant.InvalidPassword], StatusCodes.Status401Unauthorized);
 
-        var authDto = new AuthDto(GenerateJwtToken(appUser));
-        return Result<AuthDto>.Success(authDto, AuthMessageConstant.SignInSuccess);
+        var authDto = new SignInResponse(GenerateJwtToken(appUser));
+        return Result<SignInResponse>.Success(authDto, AuthMessageConstant.SignInSuccess);
     }
 
     public Task SignOutAsync()
@@ -83,6 +83,7 @@ public class AuthService(
             return Result.Fail(errors);
         }
 
+        await CreateUserRoleAsync(appUser);
         await AddAsync(masterUser);
         await _unitOfWork.SaveChangesAsync();
 
@@ -132,5 +133,18 @@ public class AuthService(
         };
 
         return (masterUser, appUser);
+    }
+
+    private async Task CreateUserRoleAsync(AppUser appUser)
+    {
+        var roleUsers = await _userManager.GetUsersInRoleAsync(Role.Admin);
+        if (roleUsers is null || roleUsers.Count == 0)
+        {
+            await _userManager.AddToRoleAsync(appUser, Role.Admin);
+        }
+        else
+        {
+            await _userManager.AddToRoleAsync(appUser, Role.User);
+        }
     }
 }

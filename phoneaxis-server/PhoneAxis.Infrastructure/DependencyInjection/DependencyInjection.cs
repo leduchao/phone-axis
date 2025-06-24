@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<RoleSeeder>();
 
         return services;
     }

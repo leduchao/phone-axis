@@ -10,7 +10,7 @@ public interface IAuthService : IBaseService<MasterUser>
 {
     Task<Result> SignUpAsync(SignUpCommand command);
 
-    Task<Result<AuthDto>> SignInAsync(SignInCommand command);
+    Task<Result<SignInResponse>> SignInAsync(SignInCommand command);
 
     Task SignOutAsync();
 

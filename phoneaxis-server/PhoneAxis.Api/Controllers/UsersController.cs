@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Entities;
 
 namespace PhoneAxis.Api.Controllers;
 
+[Authorize]
 [Route("api/users")]
 [ApiController]
 public class UsersController(IBaseService<MasterUser> masterUserService) : ControllerBase
@@ -15,5 +17,11 @@ public class UsersController(IBaseService<MasterUser> masterUserService) : Contr
     {
         var users = await _masterUserService.GetAllAsync();
         return Ok(users);
+    }
+
+    [HttpGet("get-user-info")]
+    public IActionResult GetUserInfo()
+    {
+        return Ok();
     }
 }

@@ -1,6 +1,6 @@
 import { LocalStorageKey } from "../constants/local-storage";
 import {
-  AuthResponse,
+  SignInResponse,
   SignInRequest,
   SignUpRequest,
 } from "../models/auth-model";
@@ -16,14 +16,14 @@ class AuthApi extends BaseApi {
   }
 
   signUp(request: SignUpRequest) {
-    return this.post<SignUpRequest, Result<AuthResponse>>(
+    return this.post<SignUpRequest, Result<SignInResponse>>(
       `${CONTROLLER}/sign-up`,
       request
     );
   }
 
   signIn(request: SignInRequest) {
-    return this.post<SignInRequest, Result<AuthResponse>>(
+    return this.post<SignInRequest, Result<SignInResponse>>(
       `${CONTROLLER}/sign-in`,
       request
     );

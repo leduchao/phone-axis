@@ -10,6 +10,6 @@ export interface SignUpRequest {
   password: string;
 }
 
-export interface AuthResponse {
+export interface SignInResponse {
   accessToken: string;
 }

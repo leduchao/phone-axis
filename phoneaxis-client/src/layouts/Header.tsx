@@ -16,7 +16,29 @@ import { useState } from "react";
 import { authApi } from "../apis/auth-api";
 import { useNavigate } from "react-router";
 
-const pages = ["Products", "Pricing", "Blog"];
+interface HeaderItem {
+  key: number;
+  name: string;
+  href: string;
+}
+
+const pages: HeaderItem[] = [
+  {
+    key: 1,
+    name: "Products",
+    href: "/products",
+  },
+  {
+    key: 2,
+    name: "Pricing",
+    href: "/pricing",
+  },
+  {
+    key: 3,
+    name: "Blogs",
+    href: "/blogs",
+  },
+];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Header() {
@@ -35,6 +57,10 @@ function Header() {
     setAnchorElNav(null);
   };
 
+  const goToPage = (href: string) => {
+    navigate(href);
+  };
+
   const handleSignOut = () => {
     authApi.signOut();
     navigate(ROUTES.SignIn);
@@ -46,7 +72,7 @@ function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" color="inherit">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
@@ -96,8 +122,10 @@ function Header() {
               sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: "center" }}>{page}</Typography>
+                <MenuItem key={page.key} onClick={handleCloseNavMenu}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    {page.name}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -107,7 +135,7 @@ function Header() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href={`${ROUTES.Home}`}
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -124,11 +152,12 @@ function Header() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                key={page.key}
+                color="inherit"
+                onClick={() => goToPage(page.href)}
+                sx={{ my: 2, display: "block" }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>

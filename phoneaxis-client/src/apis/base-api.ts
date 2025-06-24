@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { LocalStorageKey } from "../constants/local-storage";
 
 export class BaseApi {
   protected http: AxiosInstance;
@@ -8,6 +9,7 @@ export class BaseApi {
       baseURL,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${this.getAccessToken()}`,
       },
     });
 
@@ -57,5 +59,10 @@ export class BaseApi {
   ): Promise<T> {
     const response: AxiosResponse<T> = await this.http.delete(url, config);
     return response.data;
+  }
+
+  private getAccessToken() {
+    const accessToken = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
+    return !accessToken ? "" : accessToken;
   }
 }

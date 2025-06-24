@@ -12,9 +12,10 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { ROUTES } from "../routes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authApi } from "../apis/auth-api";
 import { useNavigate } from "react-router";
+import { userApi } from "../apis/user-api";
 
 interface HeaderItem {
   key: number;
@@ -70,6 +71,19 @@ function Header() {
     console.log(e.target);
     setAnchorElUser(null);
   };
+
+  const getUserBasicInfo = async () => {
+    try {
+      const result = await userApi.getUserBasicInfo();
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserBasicInfo();
+  }, []);
 
   return (
     <AppBar position="static" color="inherit">

@@ -29,7 +29,6 @@ export const get = async (endpoint: string, params = {}) => {
   }
 };
 
-// Hàm POST tổng quát
 export const post = async (endpoint: string, data = {}) => {
   try {
     const response = await axiosInstance().post(endpoint, data);

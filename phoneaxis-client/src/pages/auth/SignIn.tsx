@@ -15,7 +15,7 @@ import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router";
-import { AuthApi } from "../../apis/auth-api";
+import { authApi } from "../../apis/auth-api";
 import { SignInRequest } from "../../models/auth-model";
 
 function SignIn() {
@@ -76,19 +76,19 @@ function SignIn() {
       return;
     }
 
-    // try {
-    const request: SignInRequest = {
-      email: formData.email,
-      password: formData.password,
-      rememberMe: formData.rememberMe,
-    };
+    try {
+      const request: SignInRequest = {
+        email: formData.email,
+        password: formData.password,
+        rememberMe: formData.rememberMe,
+      };
 
-    const { data } = await AuthApi.signIn(request);
-    console.log(data);
-    navigate(ROUTES.Home);
-    // } catch (error) {
-    //   console.error(error);
-    // }
+      const data = await authApi.signIn(request);
+      console.log(data);
+      // navigate(ROUTES.Home);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

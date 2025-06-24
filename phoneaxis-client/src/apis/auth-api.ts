@@ -1,28 +1,31 @@
-import axios, { AxiosResponse } from "axios";
 import {
   AuthResponse,
   SignInRequest,
   SignUpRequest,
 } from "../models/auth-model";
-import { BASE_URL, post } from "./base-api";
+import { BaseApi } from "./base-api";
 
-const controller = "auth";
+const CONTROLLER = "auth";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const signUp = (
-  request: SignUpRequest
-): Promise<AxiosResponse<AuthResponse>> => {
-  const url = `${BASE_URL}/${controller}/sign-up`;
-  return axios.post(url, request);
-};
+class AuthApi extends BaseApi {
+  constructor() {
+    super(BASE_URL);
+  }
 
-const signIn = (
-  request: SignInRequest
-): Promise<AxiosResponse<AuthResponse>> => {
-  const url = `${BASE_URL}/${controller}/sign-in`;
-  return axios.post(url, request);
-};
+  signUp(request: SignUpRequest) {
+    return this.post<SignUpRequest, AuthResponse>(
+      `${CONTROLLER}/sign-up`,
+      request
+    );
+  }
 
-export const AuthApi = {
-  signUp,
-  signIn,
-};
+  signIn(request: SignInRequest) {
+    return this.post<SignInRequest, AuthResponse>(
+      `${CONTROLLER}/sign-in`,
+      request
+    );
+  }
+}
+
+export const authApi = new AuthApi();

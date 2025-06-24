@@ -1,77 +1,61 @@
-import axios from "axios";
-import { LocalStorageKey } from "../constants/local-storage";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
-export const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+export class BaseApi {
+  protected http: AxiosInstance;
 
-const axiosInstance = () => {
-  const instance = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  constructor(baseURL: string) {
+    this.http = axios.create({
+      baseURL,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  setAuthToken(localStorage.getItem(LocalStorageKey.ACCESS_TOKEN) || "");
+    this.http.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        alert(error.response.data.errors);
+        return Promise.reject(error);
+      }
+    );
+  }
 
-  return instance;
-};
-
-export const get = async (endpoint: string, params = {}) => {
-  try {
-    const response = await axiosInstance().get(endpoint, { params });
+  protected async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    const response: AxiosResponse<T> = await this.http.get(url, config);
     return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "GET request failed");
-    }
-    throw new Error("GET request failed");
   }
-};
 
-export const post = async (endpoint: string, data = {}) => {
-  try {
-    const response = await axiosInstance().post(endpoint, data);
+  protected async post<TRequest, TResponse = unknown>(
+    url: string,
+    data?: TRequest,
+    config?: AxiosRequestConfig
+  ): Promise<TResponse> {
+    const response: AxiosResponse<TResponse> = await this.http.post(
+      url,
+      data,
+      config
+    );
     return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "POST request failed");
-    }
-    throw new Error("POST request failed");
   }
-};
 
-// Hàm PUT tổng quát
-export const put = async (endpoint: string, data = {}) => {
-  try {
-    const response = await axiosInstance().put(endpoint, data);
+  protected async put<TRequest, TResponse = unknown>(
+    url: string,
+    data?: TRequest,
+    config?: AxiosRequestConfig
+  ): Promise<TResponse> {
+    const response: AxiosResponse<TResponse> = await this.http.put(
+      url,
+      data,
+      config
+    );
     return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "PUT request failed");
-    }
-    throw new Error("PUT request failed");
   }
-};
 
-export const del = async (endpoint: string) => {
-  try {
-    const response = await axiosInstance().delete(endpoint);
+  protected async delete<T>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const response: AxiosResponse<T> = await this.http.delete(url, config);
     return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || "DELETE request failed");
-    }
-    throw new Error("DELETE request failed");
   }
-};
-
-export const setAuthToken = (token: string) => {
-  if (token) {
-    axiosInstance().defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${token}`;
-  } else {
-    delete axiosInstance().defaults.headers.common["Authorization"];
-  }
-};
+}

@@ -17,6 +17,7 @@ import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router";
 import { authApi } from "../../apis/auth-api";
 import { SignInRequest } from "../../models/auth-model";
+import { LocalStorageKey } from "../../constants/local-storage";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -83,9 +84,14 @@ function SignIn() {
         rememberMe: formData.rememberMe,
       };
 
-      const data = await authApi.signIn(request);
-      console.log(data);
-      // navigate(ROUTES.Home);
+      const result = await authApi.signIn(request);
+      if (result.data) {
+        localStorage.setItem(
+          LocalStorageKey.ACCESS_TOKEN,
+          result.data.accessToken
+        );
+        navigate(ROUTES.Home);
+      }
     } catch (error) {
       console.error(error);
     }

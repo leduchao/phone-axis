@@ -13,12 +13,14 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { ROUTES } from "../routes";
 import { useState } from "react";
-import { Link } from "@mui/material";
+import { authApi } from "../apis/auth-api";
+import { useNavigate } from "react-router";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Header() {
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -31,6 +33,11 @@ function Header() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleSignOut = () => {
+    authApi.signOut();
+    navigate(ROUTES.SignIn);
   };
 
   const handleCloseUserMenu = (e: React.MouseEvent<HTMLLIElement>) => {
@@ -149,15 +156,9 @@ function Header() {
             >
               {settings.map((setting) =>
                 setting === settings[3] ? (
-                  <MenuItem key={setting}>
+                  <MenuItem key={setting} onClick={handleSignOut}>
                     <Typography sx={{ textAlign: "center" }}>
-                      <Link
-                        href={ROUTES.SignIn}
-                        sx={{ textDecoration: "none" }}
-                        color="inherit"
-                      >
-                        {setting}
-                      </Link>
+                      {setting}
                     </Typography>
                   </MenuItem>
                 ) : (

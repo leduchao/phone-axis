@@ -1,8 +1,10 @@
+import { LocalStorageKey } from "../constants/local-storage";
 import {
   AuthResponse,
   SignInRequest,
   SignUpRequest,
 } from "../models/auth-model";
+import { Result } from "../models/result";
 import { BaseApi } from "./base-api";
 
 const CONTROLLER = "auth";
@@ -14,17 +16,22 @@ class AuthApi extends BaseApi {
   }
 
   signUp(request: SignUpRequest) {
-    return this.post<SignUpRequest, AuthResponse>(
+    return this.post<SignUpRequest, Result<AuthResponse>>(
       `${CONTROLLER}/sign-up`,
       request
     );
   }
 
   signIn(request: SignInRequest) {
-    return this.post<SignInRequest, AuthResponse>(
+    return this.post<SignInRequest, Result<AuthResponse>>(
       `${CONTROLLER}/sign-in`,
       request
     );
+  }
+
+  signOut() {
+    localStorage.removeItem(LocalStorageKey.ACCESS_TOKEN);
+    localStorage.removeItem(LocalStorageKey.REFRESH_TOKEN);
   }
 }
 

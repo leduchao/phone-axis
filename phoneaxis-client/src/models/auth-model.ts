@@ -1,5 +1,3 @@
-import { BaseResponse } from "./base-model";
-
 export interface SignInRequest {
   email: string;
   password: string;
@@ -12,7 +10,6 @@ export interface SignUpRequest {
   password: string;
 }
 
-export interface AuthResponse extends BaseResponse {
+export interface AuthResponse {
   accessToken: string;
-  authResult: boolean;
 }

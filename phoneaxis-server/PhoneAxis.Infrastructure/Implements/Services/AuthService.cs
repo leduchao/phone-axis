@@ -9,6 +9,7 @@ using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Application.Interfaces.Services;
+using PhoneAxis.Domain.Common;
 using PhoneAxis.Domain.Entities;
 using PhoneAxis.Infrastructure.Models;
 using PhoneAxis.Infrastructure.Utils;
@@ -45,18 +46,18 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<AuthResponse> SignInAsync(SignInCommand command)
+    public async Task<Result<AuthDto>> SignInAsync(SignInCommand command)
     {
         var appUser = await _userManager.FindByEmailAsync(command.Email);
         if (appUser is null)
-            return AuthResponse.Fail(StatusCodes.Status404NotFound, [AuthMessageConstant.InvalidCredentials]);
+            return Result<AuthDto>.Fail([AuthMessageConstant.InvalidCredentials], StatusCodes.Status404NotFound);
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, command.Password, false);
         if (!result.Succeeded)
-            return AuthResponse.Fail(StatusCodes.Status401Unauthorized, [AuthMessageConstant.InvalidPassword]);
+            return Result<AuthDto>.Fail([AuthMessageConstant.InvalidPassword], StatusCodes.Status401Unauthorized);
 
-        var accessToken = GenerateJwtToken(appUser);
-        return AuthResponse.Success(StatusCodes.Status200OK, AuthMessageConstant.SignInSuccess, accessToken);
+        var authDto = new AuthDto(GenerateJwtToken(appUser));
+        return Result<AuthDto>.Success(authDto, AuthMessageConstant.SignInSuccess);
     }
 
     public Task SignOutAsync()
@@ -64,13 +65,13 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<AuthResponse> SignUpAsync(SignUpCommand command)
+    public async Task<Result> SignUpAsync(SignUpCommand command)
     {
         if (!string.IsNullOrEmpty(command.Email))
         {
             var existedUser = await _userManager.FindByEmailAsync(command.Email);
             if (existedUser is not null)
-                return AuthResponse.Fail(StatusCodes.Status400BadRequest, [AuthMessageConstant.UserAlreadyExists]);
+                return Result.Fail([AuthMessageConstant.UserAlreadyExists]);
         }
 
         var (masterUser, appUser) = GenerateBothTypesOfUser(command);
@@ -79,13 +80,13 @@ public class AuthService(
         if (!result.Succeeded)
         {
             var errors = result.Errors.Select(e => e.Description).ToArray();
-            return AuthResponse.Fail(StatusCodes.Status401Unauthorized, errors);
+            return Result.Fail(errors);
         }
 
         await AddAsync(masterUser);
         await _unitOfWork.SaveChangesAsync();
 
-        return AuthResponse.Success(StatusCodes.Status201Created, AuthMessageConstant.SignUpSuccess, string.Empty);
+        return Result.Success(AuthMessageConstant.SignUpSuccess, StatusCodes.Status201Created);
     }
 
     private string GenerateJwtToken(AppUser user)

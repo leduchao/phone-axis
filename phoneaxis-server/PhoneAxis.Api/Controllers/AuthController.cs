@@ -25,9 +25,9 @@ public class AuthController(IMediator mediator) : ControllerBase
         }
 
         var command = new SignInCommand(request.Email, request.Password, request.RememberMe);
-        var response = await _mediator.Send(command);
+        var result = await _mediator.Send(command);
 
-        return StatusCode(response.StatusCode, response);
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPost("sign-up")]
@@ -40,9 +40,9 @@ public class AuthController(IMediator mediator) : ControllerBase
         }
 
         var command = new SignUpCommand(request.FirstName, request.Email, request.Password);
-        var response = await _mediator.Send(command);
+        var result = await _mediator.Send(command);
 
-        return StatusCode(response.StatusCode, response);
+        return StatusCode(result.StatusCode, result);
     }
 
     private static IEnumerable<string> GetModelStateErrors(ModelStateDictionary modelState)

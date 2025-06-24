@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using PhoneAxis.Application.DTOs.Auth;
+using PhoneAxis.Domain.Common;
 
 namespace PhoneAxis.Application.Commands.Auth.SignUp;
 
-public record SignUpCommand(string? FirstName, string Email, string Password) : IRequest<AuthResponse>;
+public record SignUpCommand(string? FirstName, string Email, string Password) : IRequest<Result>;

@@ -12,11 +12,11 @@ namespace PhoneAxis.Api.Controllers;
 [ApiController]
 public class UsersController(
     IBaseService<MasterUser> masterUserService,
-    IMediator mediator, ITokenClaimReader tokenReader) : ControllerBase
+    IMediator mediator, IJwtService jwtService) : ControllerBase
 {
     private readonly IBaseService<MasterUser> _masterUserService = masterUserService;
     private readonly IMediator _mediator = mediator;
-    private readonly ITokenClaimReader _tokenReader = tokenReader;
+    private readonly IJwtService _jwtService = jwtService;
 
     [HttpGet("get-all-users")]
     public async Task<IActionResult> GetAllUsers()
@@ -28,7 +28,7 @@ public class UsersController(
     [HttpGet("get-user-info")]
     public async Task<IActionResult> GetUserInfo()
     {
-        var userId = _tokenReader.GetUserId();
+        var userId = _jwtService.GetUserIdFromAccessToken();
         if (userId is null) return Unauthorized("User ID not found in token.");
 
         var getUserBasicInfoQuery = new GetUserBasicInfoQuery(userId.GetValueOrDefault());

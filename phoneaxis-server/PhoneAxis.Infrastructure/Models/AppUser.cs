@@ -5,4 +5,16 @@ namespace PhoneAxis.Infrastructure.Models;
 public class AppUser : IdentityUser<Guid>
 {
     public string? RefreshToken { get; set; }
+
+    public AppUser()
+    {
+        
+    }
+
+    public AppUser(Guid id, string userName, string email)
+    {
+        Id = id;
+        UserName = userName;
+        Email = email;
+    }
 }

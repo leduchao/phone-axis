@@ -23,7 +23,14 @@ public class BaseRepository<T>(PhoneAxisDbContext dbContext) : IBaseRepository<T
     public async Task<IEnumerable<T>> GetAllAsync(bool includeDeleted = false)
     {
         if (includeDeleted) return await _dbSet.ToListAsync();
-        else return await _dbSet.Where(p => !p.IsDeleted).ToListAsync();
+        return await _dbSet.Where(p => !p.IsDeleted).ToListAsync();
+    }
+
+    public async Task<IEnumerable<TResult>> GetAllProjectedAsync<TResult>(Expression<Func<T, TResult>> projection, bool includeDeleted = false)
+    {
+        IQueryable<T> query = _dbSet;
+        if (!includeDeleted) query = query.Where(p => !p.IsDeleted);
+        return await query.Select(projection).ToListAsync();
     }
 
     public async Task<IEnumerable<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> condition)
@@ -31,15 +38,32 @@ public class BaseRepository<T>(PhoneAxisDbContext dbContext) : IBaseRepository<T
         return await _dbSet.Where(condition).ToListAsync();
     }
 
+    public async Task<IEnumerable<TResult>> GetAllWithConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection)
+    {
+        return await _dbSet.Where(condition).Select(projection).ToListAsync();
+    }
+
     public async Task<T> GetByIdAsync(Guid id)
     {
         return await _dbSet.FindAsync(id) ?? throw new KeyNotFoundException($"Entity with ID {id} not found.");
     }
 
+    public async Task<TResult> GetByIdProjectedAsync<TResult>(Guid id, Expression<Func<T, TResult>> projection)
+    {
+        return await _dbSet.Where(e => e.Id == id).Select(projection).FirstOrDefaultAsync()
+            ?? throw new KeyNotFoundException($"Entity with ID {id} not found.");
+    }
+
     public async Task<T> GetFirstByConditionAsync(Expression<Func<T, bool>> condition)
     {
         return await _dbSet.FirstOrDefaultAsync(condition)
-               ?? throw new KeyNotFoundException("No entity found matching the specified condition.");
+            ?? throw new KeyNotFoundException("No entity found matching the specified condition.");
+    }
+
+    public async Task<TResult> GetFirstByConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection)
+    {
+        return await _dbSet.Where(condition).Select(projection).FirstOrDefaultAsync()
+            ?? throw new KeyNotFoundException("No entity found matching the specified condition.");
     }
 
     public void Remove(T entity)

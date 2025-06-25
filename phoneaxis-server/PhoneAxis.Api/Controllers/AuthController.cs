@@ -1,10 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PhoneAxis.Api.DTOs;
+using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.Commands.Auth.SignIn;
 using PhoneAxis.Application.Commands.Auth.SignUp;
+using PhoneAxis.Domain.Common;
 
 namespace PhoneAxis.Api.Controllers;
 
@@ -20,8 +21,8 @@ public class AuthController(IMediator mediator) : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            var errors = GetModelStateErrors(ModelState);
-            return BadRequest(errors);
+            var errors = PresentationUtils.GetModelStateErrors(ModelState);
+            return BadRequest(Result.Fail([.. errors]));
         }
 
         var command = new SignInCommand(request.Email, request.Password, request.RememberMe);
@@ -35,18 +36,13 @@ public class AuthController(IMediator mediator) : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            var errors = GetModelStateErrors(ModelState);
-            return BadRequest(errors);
+            var errors = PresentationUtils.GetModelStateErrors(ModelState);
+            return BadRequest(Result.Fail([.. errors]));
         }
 
         var command = new SignUpCommand(request.FirstName, request.Email, request.Password);
         var result = await _mediator.Send(command);
 
         return StatusCode(result.StatusCode, result);
-    }
-
-    private static IEnumerable<string> GetModelStateErrors(ModelStateDictionary modelState)
-    {
-        return modelState.Values.SelectMany(p => p.Errors).Select(p => p.ErrorMessage);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace PhoneAxis.Domain.Entities;
+﻿namespace PhoneAxis.Domain.Constants;
 
 public static class Role
 {

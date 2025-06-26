@@ -2,7 +2,9 @@
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Common;
 
-namespace PhoneAxis.Application.Commands.Auth.SignUp;
+namespace PhoneAxis.Application.Commands.Auth;
+
+public record SignUpCommand(string? FirstName, string Email, string Password) : IRequest<Result>;
 
 public class SignUpCommandHandler(IAuthService authService) : IRequestHandler<SignUpCommand, Result>
 {

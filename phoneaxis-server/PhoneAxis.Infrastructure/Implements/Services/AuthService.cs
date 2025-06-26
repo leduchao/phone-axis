@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using PhoneAxis.Application.Commands.Auth.SignIn;
-using PhoneAxis.Application.Commands.Auth.SignUp;
+using PhoneAxis.Application.Commands.Auth;
 using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Application.Interfaces.Services;
+using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;
+using PhoneAxis.Domain.Constants;
 using PhoneAxis.Domain.Entities;
 using PhoneAxis.Infrastructure.Models;
 using PhoneAxis.Infrastructure.Utils;
@@ -41,7 +42,7 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<Result<SignInResponse>> SignInAsync(SignInCommand command)
+    public async Task<Result<SignInResponse>> SignInAsync(SignInQuery command)
     {
         var appUser = await _userManager.FindByEmailAsync(command.Email);
         if (appUser is null)

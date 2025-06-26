@@ -1,5 +1,4 @@
-﻿using PhoneAxis.Domain.Entities;
-using System.Net;
+﻿using System.Net;
 
 namespace PhoneAxis.Domain.Common;
 

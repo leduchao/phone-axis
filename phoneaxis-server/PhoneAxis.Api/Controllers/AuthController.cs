@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PhoneAxis.Api.DTOs;
 using PhoneAxis.Api.Utils;
-using PhoneAxis.Application.Commands.Auth.SignIn;
-using PhoneAxis.Application.Commands.Auth.SignUp;
+using PhoneAxis.Application.Commands.Auth;
+using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;
 
 namespace PhoneAxis.Api.Controllers;
@@ -25,7 +25,7 @@ public class AuthController(IMediator mediator) : ControllerBase
             return BadRequest(Result.Fail([.. errors]));
         }
 
-        var command = new SignInCommand(request.Email, request.Password, request.RememberMe);
+        var command = new SignInQuery(request.Email, request.Password, request.RememberMe);
         var result = await _mediator.Send(command);
 
         return StatusCode(result.StatusCode, result);

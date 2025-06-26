@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using PhoneAxis.Domain.Entities;
+using PhoneAxis.Domain.Constants;
 
 namespace PhoneAxis.Infrastructure.Persistence;
 

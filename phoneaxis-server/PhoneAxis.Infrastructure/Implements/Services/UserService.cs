@@ -27,4 +27,13 @@ public class UserService(
 
         return Result<UserBasicInfor>.Success(result, "Get user info successfully");
     }
+
+    public async Task<IList<string>> GetUserRolesAsync(Guid userId)
+    {
+        var appUser = await _userManager.FindByIdAsync(userId.ToString()) 
+            ?? throw new KeyNotFoundException("User not found");
+
+        var userRole = await _userManager.GetRolesAsync(appUser);
+        return userRole;
+    }
 }

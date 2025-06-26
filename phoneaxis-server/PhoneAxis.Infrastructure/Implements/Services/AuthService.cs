@@ -102,12 +102,7 @@ public class AuthService(
     {
         var roleUsers = await _userManager.GetUsersInRoleAsync(Role.Admin);
         if (roleUsers is null || roleUsers.Count == 0)
-        {
             await _userManager.AddToRoleAsync(appUser, Role.Admin);
-        }
-        else
-        {
-            await _userManager.AddToRoleAsync(appUser, Role.User);
-        }
+        else await _userManager.AddToRoleAsync(appUser, Role.User);
     }
 }

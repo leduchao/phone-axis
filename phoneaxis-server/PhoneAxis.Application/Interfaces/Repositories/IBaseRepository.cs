@@ -13,13 +13,13 @@ public interface IBaseRepository<T> where T : BaseEntity
 
     Task<TResult> GetFirstByConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection);
 
-    Task<IEnumerable<T>> GetAllAsync(bool includeDeleted = false);
+    Task<IList<T>> GetAllAsync(bool includeDeleted = false);
 
-    Task<IEnumerable<TResult>> GetAllProjectedAsync<TResult>(Expression<Func<T, TResult>> projection, bool includeDeleted = false);
+    Task<IList<TResult>> GetAllProjected<TResult>(Expression<Func<T, TResult>> projection, bool includeDeleted = false);
 
-    Task<IEnumerable<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> condition);
+    Task<IList<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> condition);
 
-    Task<IEnumerable<TResult>> GetAllWithConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection);
+    Task<IList<TResult>> GetAllWithConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection);
 
     //Task<(IEnumerable<T> items, int totalCount)> GetPagedAsync(
     //    int pageIndex, int pageSize,

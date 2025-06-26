@@ -23,7 +23,7 @@ public class UserService(
         if (appUser is null) return Result<UserBasicInfor>.Fail([$"Not found user with ID={userId}"], StatusCodes.Status404NotFound);
 
         var isAdminUser = await _userManager.IsInRoleAsync(appUser, Role.Admin);
-        var result = new UserBasicInfor(isAdminUser, masterUser.FirstName, "None profile picture");
+        var result = new UserBasicInfor(isAdminUser, masterUser.FirstName, masterUser.ProfilePicture);
 
         return Result<UserBasicInfor>.Success(result, "Get user info successfully");
     }

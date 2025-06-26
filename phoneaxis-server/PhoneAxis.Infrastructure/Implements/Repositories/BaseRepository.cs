@@ -3,6 +3,7 @@ using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Domain.Entities;
 using PhoneAxis.Infrastructure.Persistence;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace PhoneAxis.Infrastructure.Implements.Repositories;
 
@@ -20,25 +21,25 @@ public class BaseRepository<T>(PhoneAxisDbContext dbContext) : IBaseRepository<T
         await _dbSet.AddRangeAsync(entities);
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(bool includeDeleted = false)
+    public async Task<IList<T>> GetAllAsync(bool includeDeleted = false)
     {
         if (includeDeleted) return await _dbSet.ToListAsync();
         return await _dbSet.Where(p => !p.IsDeleted).ToListAsync();
     }
 
-    public async Task<IEnumerable<TResult>> GetAllProjectedAsync<TResult>(Expression<Func<T, TResult>> projection, bool includeDeleted = false)
+    public async Task<IList<TResult>> GetAllProjected<TResult>(Expression<Func<T, TResult>> projection, bool includeDeleted = false)
     {
         IQueryable<T> query = _dbSet;
         if (!includeDeleted) query = query.Where(p => !p.IsDeleted);
         return await query.Select(projection).ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> condition)
+    public async Task<IList<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> condition)
     {
         return await _dbSet.Where(condition).ToListAsync();
     }
 
-    public async Task<IEnumerable<TResult>> GetAllWithConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection)
+    public async Task<IList<TResult>> GetAllWithConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection)
     {
         return await _dbSet.Where(condition).Select(projection).ToListAsync();
     }

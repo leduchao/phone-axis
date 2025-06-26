@@ -8,6 +8,7 @@ namespace PhoneAxis.Infrastructure.Implements.Services;
 public class BaseService<T>(IBaseRepository<T> repository) : IBaseService<T> where T : BaseEntity
 {
     private readonly IBaseRepository<T> _repository = repository;
+    public readonly IBaseRepository<T> Repository = repository;
 
     public async Task AddAsync(T entity)
     {

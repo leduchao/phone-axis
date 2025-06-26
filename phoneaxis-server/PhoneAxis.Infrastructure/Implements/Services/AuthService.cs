@@ -79,7 +79,7 @@ public class AuthService(
             return Result.Fail(errors);
         }
 
-        await CreateUserRoleAsync(appUser);
+        await AddUserRoleAsync(appUser);
         await AddAsync(masterUser);
         await _unitOfWork.SaveChangesAsync();
 
@@ -98,7 +98,7 @@ public class AuthService(
         return (masterUser, appUser);
     }
 
-    private async Task CreateUserRoleAsync(AppUser appUser)
+    private async Task AddUserRoleAsync(AppUser appUser)
     {
         var roleUsers = await _userManager.GetUsersInRoleAsync(Role.Admin);
         if (roleUsers is null || roleUsers.Count == 0)

@@ -16,7 +16,7 @@ public class UserService(
 {
     private readonly UserManager<AppUser> _userManager = userManager;
 
-    public async Task<Result<UserBasicInfor>> GetUserBasicInfor(Guid userId)
+    public async Task<Result<UserBasicInfor>> GetUserBasicInforAsync(Guid userId)
     {
         var masterUser = await GetByIdAsync(userId);
         var appUser = await _userManager.FindByIdAsync(userId.ToString());

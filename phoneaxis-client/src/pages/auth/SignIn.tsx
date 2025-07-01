@@ -17,6 +17,7 @@ import { authApi } from "../../apis/auth-api";
 import { SignInRequest } from "../../models/auth-model";
 import { LocalStorageKey } from "../../constants/local-storage";
 import { Controller, useForm } from "react-hook-form";
+import { FieldRules } from "../../constants/field-rules";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ function SignIn() {
               rules={{
                 required: "Email is required",
                 pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  value: FieldRules.EMAIL_REGEX,
                   message: "Email is not correct format",
                 },
               }}
@@ -107,8 +108,8 @@ function SignIn() {
               rules={{
                 required: "Password is required",
                 minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
+                  value: FieldRules.PASSWORD_MIN_LENGTH,
+                  message: `Password must be at least ${FieldRules.PASSWORD_MIN_LENGTH} characters`,
                 },
               }}
               render={({ field }) => (

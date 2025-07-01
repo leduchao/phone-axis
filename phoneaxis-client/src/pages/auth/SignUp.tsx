@@ -1,5 +1,4 @@
 import {
-  FormControl,
   TextField,
   Typography,
   Box,
@@ -11,69 +10,36 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { ROUTES } from "../../routes";
+import { Controller, useForm } from "react-hook-form";
+import { SignUpRequest } from "../../models/auth-model";
+import { authApi } from "../../apis/auth-api";
+import { useNavigate } from "react-router";
+import { FieldRules } from "../../constants/field-rules";
 
 function SignUp() {
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [nameError, setNameError] = useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = useState("");
+  const navigate = useNavigate();
 
-  const validateInputs = () => {
-    const email = document.getElementById("email") as HTMLInputElement | null;
-    const password = document.getElementById(
-      "password"
-    ) as HTMLInputElement | null;
-    const name = document.getElementById("name") as HTMLInputElement | null;
-
-    let isValid = true;
-
-    if (!email || !email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpRequest>({
+    defaultValues: {
+      firstName: "",
+      email: "",
+      password: "",
+      terms: false,
+    },
+  });
+  const onSubmit = async (data: SignUpRequest) => {
+    try {
+      const result = await authApi.signUp(data);
+      if (result.isSuccess) navigate(ROUTES.SignIn);
+    } catch (error) {
+      console.error(error);
     }
-
-    if (!password || !password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    if (!name || !name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage("Name is required.");
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage("");
-    }
-
-    return isValid;
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
   };
 
   return (
@@ -93,73 +59,113 @@ function SignUp() {
             variant="h3"
             sx={{
               width: "100%",
-              marginBottom: "50px",
+              marginBottom: "20px",
               fontWeight: "500",
               textAlign: "center",
+              textTransform: "uppercase",
             }}
           >
             Sign up
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
-            <FormControl>
-              <TextField
-                label="Full name"
-                autoComplete="name"
-                name="name"
-                required
-                fullWidth
-                id="name"
-                placeholder="Your name"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <TextField
-                label="Email"
-                required
-                fullWidth
-                id="email"
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <TextField
-                label="Password"
-                required
-                fullWidth
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="allowExtraEmails" color="primary" />}
-              label="I want to receive updates via email."
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Controller
+              name="firstName"
+              control={control}
+              rules={{
+                minLength: {
+                  value: FieldRules.NAME_MIN_LENGTH,
+                  message: `First name must be at least ${FieldRules.NAME_MIN_LENGTH} characters`,
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Full name"
+                  autoComplete="name"
+                  fullWidth
+                  placeholder="Your name"
+                  error={!!errors.firstName}
+                  helperText={errors.firstName?.message}
+                />
+              )}
+            ></Controller>
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: FieldRules.EMAIL_REGEX,
+                  message: "Email is not correct format",
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Email"
+                  fullWidth
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                  variant="outlined"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                />
+              )}
+            ></Controller>
+            <Controller
+              name="password"
+              control={control}
+              rules={{
+                required: "Password is required",
+                minLength: {
+                  value: FieldRules.PASSWORD_MIN_LENGTH,
+                  message: `Password must be at least ${FieldRules.PASSWORD_MIN_LENGTH} characters`,
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Password"
+                  fullWidth
+                  placeholder="••••••"
+                  type="password"
+                  autoComplete="new-password"
+                  variant="outlined"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                />
+              )}
+            ></Controller>
+            <Controller
+              name="terms"
+              control={control}
+              rules={{
+                required: "You have to agree with the terms of use",
+              }}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...field}
+                      checked={field.value}
+                      color="primary"
+                    />
+                  }
+                  label="I agree to the terms of use"
+                  className={errors.terms ? "text-red-600" : ""}
+                />
+              )}
+            ></Controller>
+            {errors.terms && (
+              <Typography variant="caption" component={"span"} color="error">
+                {errors.terms.message}
+              </Typography>
+            )}
+            <Button type="submit" fullWidth variant="contained">
               Sign up
             </Button>
           </Box>

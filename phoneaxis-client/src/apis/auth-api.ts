@@ -16,7 +16,7 @@ class AuthApi extends BaseApi {
   }
 
   signUp(request: SignUpRequest) {
-    return this.post<SignUpRequest, Result<SignInResponse>>(
+    return this.post<SignUpRequest, Result<undefined>>(
       `${CONTROLLER}/sign-up`,
       request
     );

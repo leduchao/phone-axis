@@ -8,6 +8,7 @@ export interface SignUpRequest {
   firstName?: string;
   email: string;
   password: string;
+  terms: boolean;
 }
 
 export interface SignInResponse {

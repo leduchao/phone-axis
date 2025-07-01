@@ -47,6 +47,12 @@ function Header() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
+  const [userInfo, setUserInfo] = useState({
+    isAdmin: false,
+    firstName: "",
+    profilePicture: "",
+  });
+
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -67,8 +73,7 @@ function Header() {
     navigate(ROUTES.SignIn);
   };
 
-  const handleCloseUserMenu = (e: React.MouseEvent<HTMLLIElement>) => {
-    console.log(e.target);
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
@@ -76,6 +81,12 @@ function Header() {
     try {
       const result = await userApi.getUserBasicInfo();
       console.log(result);
+      if (result.isSuccess && result.data)
+        setUserInfo({
+          isAdmin: result.data.isAdmin,
+          firstName: result.data.firstName,
+          profilePicture: result.data.profilePicture,
+        });
     } catch (error) {
       console.error(error);
     }
@@ -100,7 +111,6 @@ function Header() {
               display: { xs: "none", md: "flex" },
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -156,7 +166,6 @@ function Header() {
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -175,7 +184,16 @@ function Header() {
               </Button>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, display: "flex" }}>
+            <Typography
+              component={"span"}
+              sx={{
+                marginRight: "10px",
+                alignContent: "center",
+              }}
+            >
+              {userInfo.firstName}
+            </Typography>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

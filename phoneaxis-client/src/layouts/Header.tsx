@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { authApi } from "../apis/auth-api";
 import { useNavigate } from "react-router";
 import { userApi } from "../apis/user-api";
+import { UserBasicInfo } from "../models/user-model";
 
 interface HeaderItem {
   key: number;
@@ -47,7 +48,7 @@ function Header() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-  const [userInfo, setUserInfo] = useState({
+  const [userInfo, setUserInfo] = useState<UserBasicInfo>({
     isAdmin: false,
     firstName: "",
     profilePicture: "",

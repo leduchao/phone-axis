@@ -11,7 +11,7 @@ class UserApi extends BaseApi {
   }
 
   getUserBasicInfo() {
-    const url = `${CONTROLLER}/get-user-info`;
+    const url = `${CONTROLLER}/get-user-basic-info`;
     return this.get<Result<UserBasicInfo>>(url);
   }
 }

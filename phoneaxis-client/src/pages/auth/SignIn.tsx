@@ -1,5 +1,4 @@
 import {
-  FormControl,
   TextField,
   Typography,
   Box,
@@ -11,80 +10,32 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router";
 import { authApi } from "../../apis/auth-api";
 import { SignInRequest } from "../../models/auth-model";
 import { LocalStorageKey } from "../../constants/local-storage";
+import { Controller, useForm } from "react-hook-form";
 
 function SignIn() {
   const navigate = useNavigate();
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInRequest>({
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-    const { name, value, checked, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById("email") as HTMLInputElement | null;
-    const password = document.getElementById(
-      "password"
-    ) as HTMLInputElement | null;
-
-    let isValid = true;
-
-    if (!email || !email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
-
-    if (!password || !password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    return isValid;
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (emailError || passwordError) {
-      return;
-    }
-
+  const onSubmit = async (data: SignInRequest) => {
     try {
-      const request: SignInRequest = {
-        email: formData.email,
-        password: formData.password,
-        rememberMe: formData.rememberMe,
-      };
-
-      const result = await authApi.signIn(request);
+      const result = await authApi.signIn(data);
       if (result.data) {
         localStorage.setItem(
           LocalStorageKey.ACCESS_TOKEN,
@@ -114,68 +65,84 @@ function SignIn() {
             variant="h3"
             sx={{
               width: "100%",
-              marginBottom: "50px",
+              marginBottom: "20px",
               fontWeight: "500",
               textAlign: "center",
+              textTransform: "uppercase",
             }}
           >
             Sign in
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
-            <FormControl>
-              <TextField
-                label="Email"
-                required
-                fullWidth
-                id="email"
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                onChange={handleChange}
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <TextField
-                label="Password"
-                required
-                fullWidth
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                onChange={handleChange}
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                  color="primary"
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Email is not correct format",
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Email"
+                  fullWidth
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                  variant="outlined"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
                 />
-              }
-              label="Remember me"
+              )}
+            ></Controller>
+            <Controller
+              name="password"
+              control={control}
+              rules={{
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Password"
+                  fullWidth
+                  placeholder="••••••"
+                  type="password"
+                  autoComplete="new-password"
+                  variant="outlined"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                />
+              )}
+            ></Controller>
+            <Controller
+              name="rememberMe"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...field}
+                      checked={field.value}
+                      color="primary"
+                    />
+                  }
+                  label="Remember me"
+                  className={errors.rememberMe ? "text-red-600" : ""}
+                />
+              )}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Sign in
             </Button>
             <Link

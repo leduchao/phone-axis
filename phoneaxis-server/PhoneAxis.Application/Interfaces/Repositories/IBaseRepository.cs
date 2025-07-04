@@ -21,10 +21,7 @@ public interface IBaseRepository<T> where T : BaseEntity
 
     Task<IList<TResult>> GetAllWithConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection);
 
-    //Task<(IEnumerable<T> items, int totalCount)> GetPagedAsync(
-    //    int pageIndex, int pageSize,
-    //    Expression<Func<T, bool>> filter = null,
-    //    Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null);
+    IQueryable GetQueryable();
 
     Task AddAsync(T entity);
 

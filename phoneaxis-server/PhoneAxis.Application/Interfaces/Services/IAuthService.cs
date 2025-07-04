@@ -2,11 +2,10 @@
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;
-using PhoneAxis.Domain.Entities;
 
 namespace PhoneAxis.Application.Interfaces.Services;
 
-public interface IAuthService : IBaseService<MasterUser>
+public interface IAuthService
 {
     Task<Result> SignUpAsync(SignUpCommand command);
 

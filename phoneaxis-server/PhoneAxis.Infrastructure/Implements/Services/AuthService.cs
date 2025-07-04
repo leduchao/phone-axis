@@ -20,9 +20,10 @@ public class AuthService(
     UserManager<AppUser> userManager,
     SignInManager<AppUser> signInManager,
     IBaseRepository<MasterUser> masterUserRepo,
-    IUnitOfWork unitOfWork) : BaseService<MasterUser>(masterUserRepo), IAuthService
+    IUnitOfWork unitOfWork) : IAuthService
 {
-    private readonly IJwtService _jwtService = jwtService;
+	private readonly IBaseRepository<MasterUser> _masterUserRepo = masterUserRepo;
+	private readonly IJwtService _jwtService = jwtService;
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly SignInManager<AppUser> _signInManager = signInManager;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
@@ -80,7 +81,7 @@ public class AuthService(
         }
 
         await AddUserRoleAsync(appUser);
-        await AddAsync(masterUser);
+        await _masterUserRepo.AddAsync(masterUser);
         await _unitOfWork.SaveChangesAsync();
 
         return Result.Success(AuthMessageConstant.SignUpSuccess, StatusCodes.Status201Created);

@@ -3,7 +3,6 @@ using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Domain.Entities;
 using PhoneAxis.Infrastructure.Persistence;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace PhoneAxis.Infrastructure.Implements.Repositories;
 
@@ -67,7 +66,12 @@ public class BaseRepository<T>(PhoneAxisDbContext dbContext) : IBaseRepository<T
             ?? throw new KeyNotFoundException("No entity found matching the specified condition.");
     }
 
-    public void Remove(T entity)
+	public IQueryable GetQueryable()
+	{
+        return _dbSet.AsQueryable();
+	}
+
+	public void Remove(T entity)
     {
         _dbSet.Remove(entity);
     }

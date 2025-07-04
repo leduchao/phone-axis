@@ -28,7 +28,6 @@ public static class DependencyInjection
         services.AddScoped<IDbConnection>(sp => new MySqlConnection(configuration.GetConnectionString(PhoneAxisDbContext)));
 
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-        services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<RoleSeeder>();
         services.AddScoped<IJwtService, JwtService>();

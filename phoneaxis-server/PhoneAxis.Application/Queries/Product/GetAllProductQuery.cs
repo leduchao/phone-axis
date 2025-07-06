@@ -9,13 +9,13 @@ public sealed record GetAllProductQuery() : IRequest<Result<IList<ProductListIte
 
 public class GetAllProductQueryHandler(IBaseRepository<Domain.Entities.Product> productRepository) : IRequestHandler<GetAllProductQuery, Result<IList<ProductListItem>>>
 {
-	private readonly IBaseRepository<Domain.Entities.Product> _productRepository = productRepository;
+    private readonly IBaseRepository<Domain.Entities.Product> _productRepository = productRepository;
 
-	public async Task<Result<IList<ProductListItem>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
-	{
-		var products = await _productRepository.GetAllProjected(p => 
-			new ProductListItem(p.Id, p.ImageUrl, p.ProductName ?? string.Empty, p.Description ?? string.Empty, p.Price, p.DiscountPercentage));
+    public async Task<Result<IList<ProductListItem>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
+    {
+        var products = await _productRepository.GetAllProjected(p => 
+            new ProductListItem(p.Id, p.ImageUrl, p.ProductName ?? string.Empty, p.Description ?? string.Empty, p.Price, p.DiscountPercentage));
 
-		return Result<IList<ProductListItem>>.Success(products, "Get all product successfully");
-	}
+        return Result<IList<ProductListItem>>.Success(products, "Get all product successfully");
+    }
 }

@@ -22,8 +22,8 @@ public class AuthService(
     IBaseRepository<MasterUser> masterUserRepo,
     IUnitOfWork unitOfWork) : IAuthService
 {
-	private readonly IBaseRepository<MasterUser> _masterUserRepo = masterUserRepo;
-	private readonly IJwtService _jwtService = jwtService;
+    private readonly IBaseRepository<MasterUser> _masterUserRepo = masterUserRepo;
+    private readonly IJwtService _jwtService = jwtService;
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly SignInManager<AppUser> _signInManager = signInManager;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;

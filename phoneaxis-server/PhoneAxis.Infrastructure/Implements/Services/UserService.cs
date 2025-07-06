@@ -13,7 +13,7 @@ namespace PhoneAxis.Infrastructure.Implements.Services;
 public class UserService(IBaseRepository<MasterUser> masterUserRepository, UserManager<AppUser> userManager) : IUserService
 {
     private readonly IBaseRepository<MasterUser> _masterUserRepository = masterUserRepository;
-	private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly UserManager<AppUser> _userManager = userManager;
 
     public async Task<Result<UserBasicInfor>> GetUserBasicInforAsync(Guid userId)
     {
@@ -21,7 +21,7 @@ public class UserService(IBaseRepository<MasterUser> masterUserRepository, UserM
         if (masterUser is null) 
             return Result<UserBasicInfor>.Fail([$"Not found master user with ID={userId}"], StatusCodes.Status404NotFound);
 
-		var appUser = await _userManager.FindByIdAsync(userId.ToString());
+        var appUser = await _userManager.FindByIdAsync(userId.ToString());
         if (appUser is null) 
             return Result<UserBasicInfor>.Fail([$"Not found user with ID={userId}"], StatusCodes.Status404NotFound);
 

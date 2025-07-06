@@ -10,15 +10,15 @@ public record CreateCategoryCommand([Required] string CategoryName, string? Desc
 
 public class CreateCategoryCommandHandler(IBaseRepository<Domain.Entities.Category> categoryRepo, IUnitOfWork unitOfWork) : IRequestHandler<CreateCategoryCommand, Result>
 {
-	private readonly IBaseRepository<Domain.Entities.Category> _categoryRepo = categoryRepo;
-	private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IBaseRepository<Domain.Entities.Category> _categoryRepo = categoryRepo;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-	public async Task<Result> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
-	{
-		var newCategory = new Domain.Entities.Category(request.CategoryName, request.Description);
-		await _categoryRepo.AddAsync(newCategory);
-		await _unitOfWork.SaveChangesAsync();
+    public async Task<Result> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    {
+        var newCategory = new Domain.Entities.Category(request.CategoryName, request.Description);
+        await _categoryRepo.AddAsync(newCategory);
+        await _unitOfWork.SaveChangesAsync();
 
-		return Result.Success("Category created successfully");
-	}
+        return Result.Success("Category created successfully");
+    }
 }

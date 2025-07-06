@@ -2,9 +2,9 @@
 
 public class Category(string categoryName, string? description) : BaseEntity
 {
-	public string CategoryName { get; set; } = categoryName;
+    public string CategoryName { get; set; } = categoryName;
 
-	public string? Description { get; set; } = description;
+    public string? Description { get; set; } = description;
 
-	public IList<Product> Products { get; set; } = [];
+    public IList<Product> Products { get; set; } = [];
 }

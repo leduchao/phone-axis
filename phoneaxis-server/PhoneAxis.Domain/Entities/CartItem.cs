@@ -14,7 +14,7 @@ public class CartItem : BaseEntity
     [ForeignKey(nameof(CartId))]
     public Cart Cart { get; set; } = null!;
 
-	public int Quantity { get; set; }
+    public int Quantity { get; set; }
 
     public decimal UnitPrice { get; set; }
 

@@ -11,19 +11,19 @@ namespace PhoneAxis.Api.Controllers;
 [ApiController]
 public class CategoriesController(IMediator mediator) : ControllerBase
 {
-	private readonly IMediator _mediator = mediator;
+    private readonly IMediator _mediator = mediator;
 
-	[HttpGet("get-all-category")]
-	public async Task<IActionResult> GetAllCategory()
-	{
-		var result = await _mediator.Send(new GetAllCategoryQuery());
-		return StatusCode(result.StatusCode, result);
-	}
+    [HttpGet("get-all-category")]
+    public async Task<IActionResult> GetAllCategory()
+    {
+        var result = await _mediator.Send(new GetAllCategoryQuery());
+        return StatusCode(result.StatusCode, result);
+    }
 
-	[HttpPost("create-category")]
-	public async Task<IActionResult> CreateCategory(CreateCategoryCommand command)
-	{
-		var result = await _mediator.Send(command);
-		return StatusCode(result.StatusCode, result);
-	}
+    [HttpPost("create-category")]
+    public async Task<IActionResult> CreateCategory(CreateCategoryCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return StatusCode(result.StatusCode, result);
+    }
 }

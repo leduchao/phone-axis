@@ -1,10 +1,10 @@
 ﻿namespace PhoneAxis.Domain.Entities;
 
-public class Category : BaseEntity
+public class Category(string categoryName, string? description) : BaseEntity
 {
-    public required string CategoryName { get; set; }
+	public string CategoryName { get; set; } = categoryName;
 
-    public string? Description { get; set; }
+	public string? Description { get; set; } = description;
 
-    public IList<Product> Products { get; set; } = [];
+	public IList<Product> Products { get; set; } = [];
 }

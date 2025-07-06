@@ -41,6 +41,10 @@ public class PhoneAxisDbContext(DbContextOptions<PhoneAxisDbContext> options) : 
 			.Property(p => p.Price)
 			.HasPrecision(18, 4);
 
+		builder.Entity<Product>()
+			.Property(p => p.DiscountPercentage)
+			.HasPrecision(5, 2);
+
 		builder.Entity<Order>()
 			.Property(p => p.TotalAmount)
 			.HasPrecision(18, 4);

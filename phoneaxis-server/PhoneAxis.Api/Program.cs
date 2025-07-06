@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.DependencyInjection;
+using PhoneAxis.Domain.Common;
 using PhoneAxis.Infrastructure.DependencyInjection;
 using PhoneAxis.Infrastructure.Models;
 using PhoneAxis.Infrastructure.Persistence;
@@ -12,9 +15,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = PresentationUtils.GetModelStateErrors(context.ModelState);
+        return new BadRequestObjectResult(Result.Fail([.. errors]));
+    };
+});
 
 builder.Services.AddCors(options =>
 {

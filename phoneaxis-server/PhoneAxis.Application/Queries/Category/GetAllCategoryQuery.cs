@@ -1,0 +1,19 @@
+﻿using MediatR;
+using PhoneAxis.Application.DTOs.Category;
+using PhoneAxis.Application.Interfaces.Repositories;
+using PhoneAxis.Domain.Common;
+
+namespace PhoneAxis.Application.Queries.Category;
+
+public record GetAllCategoryQuery() : IRequest<Result<IList<CategoryListItem>>>;
+
+public class GetAllCategoryQueryHandler(IBaseRepository<Domain.Entities.Category> categoryRepository) : IRequestHandler<GetAllCategoryQuery, Result<IList<CategoryListItem>>>
+{
+	private readonly IBaseRepository<Domain.Entities.Category> _categoryRepository = categoryRepository;
+
+	public async Task<Result<IList<CategoryListItem>>> Handle(GetAllCategoryQuery request, CancellationToken cancellationToken)
+	{
+		var categories = await _categoryRepository.GetAllProjected(c => new CategoryListItem(c.Id, c.CategoryName, c.Description));
+		return Result<IList<CategoryListItem>>.Success(categories, "Get all categories successfully");
+	}
+}

@@ -29,4 +29,6 @@ public class Product : BaseEntity
     public Category Category { get; set; } = null!;
 
     public bool IsFeatured { get; set; } = false;
+
+    public decimal DiscountPercentage { get; set; } = 0;
 }

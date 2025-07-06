@@ -21,4 +21,8 @@
     <ProjectReference Include="..\PhoneAxis.Infrastructure\PhoneAxis.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
 </Project>

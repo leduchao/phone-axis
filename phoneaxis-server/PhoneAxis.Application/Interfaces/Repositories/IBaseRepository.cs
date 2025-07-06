@@ -31,7 +31,7 @@ public interface IBaseRepository<T> where T : BaseEntity
 
     void UpdateRange(IEnumerable<T> entities);
 
-    void Remove(T entity);
+    void Remove(T entity, bool isSoftDelete = false);
 
-    void RemoveRange(IEnumerable<T> entities);
+    void RemoveRange(IEnumerable<T> entities, bool isSoftDelete = false);
 }

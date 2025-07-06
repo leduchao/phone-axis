@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhoneAxis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using PhoneAxis.Infrastructure.Persistence;
 namespace PhoneAxis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhoneAxisDbContext))]
-    partial class PhoneAxisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706111951_Add_DiscoutPercentage_For_Product")]
+    partial class Add_DiscoutPercentage_For_Product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

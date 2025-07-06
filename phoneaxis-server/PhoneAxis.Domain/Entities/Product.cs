@@ -11,17 +11,17 @@ public class Product : BaseEntity
 
     public ProductType ProductType { get; set; } = ProductType.None;
 
-    public required decimal Price { get; set; }
+    public decimal Price { get; set; }
 
     public string? Sku { get; set; }
 
     public int Stock { get; set; }
 
-    public required string ImageUrl { get; set; }
+    public string ImageUrl { get; set; } = null!;
 
     public string? Description { get; set; }
 
-    public ICollection<ProductImage> ProductImages { get; set; } = [];
+    public IList<ProductImage> ProductImages { get; set; } = [];
 
     public Guid CategoryId { get; set; }
 

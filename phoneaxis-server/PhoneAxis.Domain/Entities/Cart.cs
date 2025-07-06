@@ -1,23 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Security.Cryptography;
 
 namespace PhoneAxis.Domain.Entities;
 
 public class Cart : BaseEntity
 {
-    public Guid? UserId { get; set; }
+    public Guid UserId { get; set; }
 
     [ForeignKey(nameof(UserId))]
     public MasterUser User { get; set; } = null!;
 
-    public ICollection<CartItem> Items { get; set; } = [];
+    public IList<CartItem> Items { get; set; } = [];
 
     public decimal TotalAmount => Items.Sum(i => i.SubTotal);
 
     public Cart() { }
 
-    public Cart(Guid? userId)
+    public Cart(Guid userId)
     {
         UserId = userId;
     }

@@ -9,23 +9,21 @@ using PhoneAxis.Infrastructure.Implements.Repositories;
 using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Infrastructure.Implements;
 using System.Data;
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 
 namespace PhoneAxis.Infrastructure.DependencyInjection;
 
 public static class DependencyInjection
 {
-    private const string PhoneAxisDbContext = "PhoneAxisDbContext";
+    private const string SqlServerDb = "SqlServerDb";
 
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<PhoneAxisDbContext>(options =>
-            options.UseMySql(
-                configuration.GetConnectionString(PhoneAxisDbContext),
-                ServerVersion.AutoDetect(configuration.GetConnectionString(PhoneAxisDbContext))));
+            options.UseSqlServer(configuration.GetConnectionString(SqlServerDb)));
 
-        // db connection for dapper using my sql
-        services.AddScoped<IDbConnection>(sp => new MySqlConnection(configuration.GetConnectionString(PhoneAxisDbContext)));
+        // db connection for dapper using sql server
+        services.AddScoped<IDbConnection>(sp => new SqlConnection(configuration.GetConnectionString(SqlServerDb)));
 
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();

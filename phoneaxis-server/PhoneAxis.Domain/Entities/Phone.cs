@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using PhoneAxis.Domain.Enums;
+﻿using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Domain.Entities;
 

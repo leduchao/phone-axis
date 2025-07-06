@@ -6,17 +6,17 @@ public class Order : BaseEntity
 {
     public string? OrderCode { get; set; }
 
-    public required decimal TotalAmount { get; set; }
+    public decimal TotalAmount { get; set; }
 
-    public required string CustomerName { get; set; }
+    public string CustomerName { get; set; } = null!;
 
-    public required string CustomerPhone { get; set; }
+    public string CustomerPhone { get; set; } = null!;
 
-    public required string ShippingAddress { get; set; }
+    public string ShippingAddress { get; set; } = null!;
 
     public OrderStatus Status { get; set; } = OrderStatus.None;
 
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
-    public ICollection<OrderDetail> OrderDetails { get; set; } = [];
+    public IList<OrderDetail> OrderDetails { get; set; } = [];
 }

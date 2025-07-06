@@ -14,7 +14,7 @@ public class OrderDetail : BaseEntity
     [ForeignKey(nameof(ProductId))]
     public Product Product { get; set; } = null!;
 
-    public int Quantity { get; set; } = default;
+    public int Quantity { get; set; }
 
     public decimal UnitPrice { get; set; }
 }

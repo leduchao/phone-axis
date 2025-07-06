@@ -6,5 +6,5 @@ public class Category : BaseEntity
 
     public string? Description { get; set; }
 
-    public List<Product> Products { get; set; } = [];
+    public IList<Product> Products { get; set; } = [];
 }

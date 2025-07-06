@@ -14,7 +14,7 @@ public class GetAllProductQueryHandler(IBaseRepository<Domain.Entities.Product> 
     public async Task<Result<IList<ProductListItem>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
     {
         var products = await _productRepository.GetAllProjected(p => 
-            new ProductListItem(p.Id, p.ImageUrl, p.ProductName ?? string.Empty, p.Description ?? string.Empty, p.Price, p.DiscountPercentage));
+            new ProductListItem(p.Id, p.ImageUrl, p.ProductName ?? string.Empty, p.Description ?? string.Empty, p.Category.CategoryName, p.Price, p.DiscountPercentage));
 
         return Result<IList<ProductListItem>>.Success(products, "Get all product successfully");
     }

@@ -9,7 +9,7 @@ public interface IAuthService
 {
     Task<Result> SignUpAsync(SignUpCommand command);
 
-    Task<Result<SignInResponse>> SignInAsync(SignInQuery command);
+    Task<Result<SignInResult>> SignInAsync(SignInQuery command);
 
     Task SignOutAsync();
 

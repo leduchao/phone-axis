@@ -43,18 +43,18 @@ public class AuthService(
         throw new NotImplementedException();
     }
 
-    public async Task<Result<SignInResponse>> SignInAsync(SignInQuery command)
+    public async Task<Result<Application.DTOs.Auth.SignInResult>> SignInAsync(SignInQuery command)
     {
         var appUser = await _userManager.FindByEmailAsync(command.Email);
         if (appUser is null)
-            return Result<SignInResponse>.Fail([AuthMessageConstant.InvalidCredentials], StatusCodes.Status404NotFound);
+            return Result<Application.DTOs.Auth.SignInResult>.Fail([AuthMessageConstant.InvalidCredentials], StatusCodes.Status404NotFound);
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, command.Password, false);
         if (!result.Succeeded)
-            return Result<SignInResponse>.Fail([AuthMessageConstant.InvalidPassword], StatusCodes.Status401Unauthorized);
+            return Result<Application.DTOs.Auth.SignInResult>.Fail([AuthMessageConstant.InvalidPassword], StatusCodes.Status401Unauthorized);
 
-        var authDto = new SignInResponse(_jwtService.GenerateAccessToken(appUser.Id, command.Email));
-        return Result<SignInResponse>.Success(authDto, AuthMessageConstant.SignInSuccess);
+        var signInResult = new Application.DTOs.Auth.SignInResult(appUser.Id, _jwtService.GenerateAccessToken(appUser.Id, command.Email));
+        return Result<Application.DTOs.Auth.SignInResult>.Success(signInResult, AuthMessageConstant.SignInSuccess);
     }
 
     public Task SignOutAsync()

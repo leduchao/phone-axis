@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Common;
@@ -11,13 +12,21 @@ public record SignInQuery(
     [Required][Length(6, 100)] string Password, 
     bool RememberMe) : IRequest<Result<SignInResponse>>;
 
-public class SignInQueryHandler(IAuthService authService) : IRequestHandler<SignInQuery, Result<SignInResponse>>
+public class SignInQueryHandler(IAuthService authService, IUserService userService) : IRequestHandler<SignInQuery, Result<SignInResponse>>
 {
     private readonly IAuthService _authService = authService;
+    private readonly IUserService _userService = userService;
 
     public async Task<Result<SignInResponse>> Handle(SignInQuery command, CancellationToken cancellationToken)
     {
-        var result = await _authService.SignInAsync(command);
-        return result;
+        var signInResult = await _authService.SignInAsync(command);
+        if (signInResult.IsSuccess && signInResult.Data is not null)
+        {
+            var userInfoResult = await _userService.GetUserBasicInforAsync(signInResult.Data.UserId);
+            return Result<SignInResponse>.Success(new SignInResponse(signInResult.Data.AccessToken, userInfoResult.Data), AuthMessageConstant.SignInSuccess);
+        }
+
+        return Result<SignInResponse>.Fail(signInResult.Errors, signInResult.StatusCode);
+
     }
 }

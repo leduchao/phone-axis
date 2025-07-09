@@ -5,7 +5,7 @@ namespace PhoneAxis.Application.Interfaces.Services;
 
 public interface IUserService
 {
-    Task<Result<UserBasicInfor>> GetUserBasicInforAsync(Guid userId);
+    Task<Result<UserBasicInfo>> GetUserBasicInforAsync(Guid userId);
 
     Task<IList<string>> GetUserRolesAsync(Guid userId);
 }

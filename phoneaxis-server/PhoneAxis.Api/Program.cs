@@ -79,6 +79,22 @@ builder.Services
         };
     });
 
+builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (context.Request.Cookies.TryGetValue("access_token", out var token))
+            {
+                context.Token = token;
+			}
+
+            return Task.CompletedTask;
+		}
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -96,7 +112,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAllOrigins");
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -15,20 +15,20 @@ public class UserService(IBaseRepository<MasterUser> masterUserRepository, UserM
     private readonly IBaseRepository<MasterUser> _masterUserRepository = masterUserRepository;
     private readonly UserManager<AppUser> _userManager = userManager;
 
-    public async Task<Result<UserBasicInfor>> GetUserBasicInforAsync(Guid userId)
+    public async Task<Result<UserBasicInfo>> GetUserBasicInforAsync(Guid userId)
     {
         var masterUser = await _masterUserRepository.GetByIdProjectedAsync(userId, p => new { p.FirstName, p.ProfilePicture });
         if (masterUser is null) 
-            return Result<UserBasicInfor>.Fail([$"Not found master user with ID={userId}"], StatusCodes.Status404NotFound);
+            return Result<UserBasicInfo>.Fail([$"Not found master user with ID={userId}"], StatusCodes.Status404NotFound);
 
         var appUser = await _userManager.FindByIdAsync(userId.ToString());
         if (appUser is null) 
-            return Result<UserBasicInfor>.Fail([$"Not found user with ID={userId}"], StatusCodes.Status404NotFound);
+            return Result<UserBasicInfo>.Fail([$"Not found user with ID={userId}"], StatusCodes.Status404NotFound);
 
         var isAdminUser = await _userManager.IsInRoleAsync(appUser, Role.Admin);
-        var result = new UserBasicInfor(isAdminUser, masterUser.FirstName, masterUser.ProfilePicture);
+        var result = new UserBasicInfo(isAdminUser, masterUser.FirstName, masterUser.ProfilePicture);
 
-        return Result<UserBasicInfor>.Success(result, "Get user info successfully");
+        return Result<UserBasicInfo>.Success(result, "Get user info successfully");
     }
 
     public async Task<IList<string>> GetUserRolesAsync(Guid userId)

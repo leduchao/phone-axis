@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PhoneAxis.Application.DTOs.User;
 using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Application.Interfaces.Services;
@@ -38,5 +39,28 @@ public class UserService(IBaseRepository<MasterUser> masterUserRepository, UserM
 
         var userRole = await _userManager.GetRolesAsync(appUser);
         return userRole;
+    }
+
+    public async Task<(bool, Guid?, string?)> ValidateRefreshTokenAsync(string refreshToken)
+    {
+        var appUser = await _userManager.Users.FirstOrDefaultAsync(
+            x => x.RefreshToken == refreshToken && x.RefreshTokenExpireAt > DateTime.UtcNow);
+
+        if (appUser is not null)
+        {
+            return (true, appUser.Id, appUser.Email);
+        }
+
+        return (false, null, null);
+    }
+
+    public async Task UpdateRefreshTokenAsync(string userId, string refreshToken)
+    {
+        var appUser = await _userManager.FindByIdAsync(userId.ToString());
+        if (appUser is null) return;
+
+        appUser.RefreshToken = refreshToken;
+        appUser.RefreshTokenExpireAt = DateTime.UtcNow;
+        await _userManager.UpdateAsync(appUser);
     }
 }

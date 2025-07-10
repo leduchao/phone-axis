@@ -2,4 +2,4 @@
 
 namespace PhoneAxis.Application.DTOs.Auth;
 
-public record SignInResponse(string? AccessToken, UserBasicInfo? UserInfo);
+public record SignInResponse(TokenModel? TokenModel, UserBasicInfo? UserInfo);

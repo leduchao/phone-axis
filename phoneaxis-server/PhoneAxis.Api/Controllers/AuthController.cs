@@ -14,49 +14,98 @@ namespace PhoneAxis.Api.Controllers;
 [ApiController]
 public class AuthController(IMediator mediator) : ControllerBase
 {
-	private readonly IMediator _mediator = mediator;
+    private readonly IMediator _mediator = mediator;
 
-	[HttpPost("sign-in")]
-	public async Task<IActionResult> SignIn(SignInQuery query)
-	{
-		var result = await _mediator.Send(query);
-		if (result.IsSuccess && result.Data is not null)
-		{
-			Response.Cookies.Append("access_token", result.Data.AccessToken ?? string.Empty, new CookieOptions
-			{
-				HttpOnly = true,
-				Secure = true,
-				SameSite = SameSiteMode.None,
-				Expires = DateTimeOffset.UtcNow.AddDays(1.5)
-			});
+    [HttpPost("sign-in")]
+    public async Task<IActionResult> SignIn(SignInQuery query)
+    {
+        var result = await _mediator.Send(query);
+        if (!result.IsSuccess)
+        {
+            Response.Cookies.Delete("access_token");
+            return StatusCode(result.StatusCode, result);
+        }
 
-			var successResult = Result<UserBasicInfo>.Success(result.Data.UserInfo, result.Message);
-			return StatusCode(successResult.StatusCode, successResult);
-		}
+        if (result.Data is not null && result.Data.TokenModel is not null)
+        {
+            Response.Cookies.Append("access_token", result.Data.TokenModel.AccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(1.5)
+            });
 
-		Response.Cookies.Delete("access_token");
+            Response.Cookies.Append("refresh_token", result.Data.TokenModel.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(15)
+            });
 
-		return StatusCode(result.StatusCode, result);
-	}
+            var successResult = Result<UserBasicInfo>.Success(result.Data.UserInfo, result.Message);
+            return StatusCode(successResult.StatusCode, successResult);
+        }
 
-	[HttpPost("sign-up")]
-	public async Task<IActionResult> SignUp(SignUpCommand command)
-	{
-		var result = await _mediator.Send(command);
-		return StatusCode(result.StatusCode, result);
-	}
+        return StatusCode(StatusCodes.Status400BadRequest, Result.Fail([AuthMessageConstant.SignInFail]));
+    }
 
-	[HttpPost("sign-out")]
-	public IActionResult SignOutUser()
-	{
-		Response.Cookies.Delete("access_token", new CookieOptions
-		{
-			HttpOnly = true,
-			Secure = true,
-			SameSite = SameSiteMode.None,
-			Path = "/"
-		});
+    [HttpPost("sign-up")]
+    public async Task<IActionResult> SignUp(SignUpCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return StatusCode(result.StatusCode, result);
+    }
 
-		return StatusCode(StatusCodes.Status200OK, Result.Success(AuthMessageConstant.SignOutSuccess));
-	}
+    [HttpPost("sign-out")]
+    public IActionResult SignOutUser()
+    {
+        Response.Cookies.Delete("access_token", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Path = "/"
+        });
+
+        return StatusCode(StatusCodes.Status200OK, Result.Success(AuthMessageConstant.SignOutSuccess));
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken()
+    {
+        var refreshToken = Request.Cookies["refresh_token"];
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return StatusCode(
+                StatusCodes.Status401Unauthorized,
+                Result.Fail([AuthMessageConstant.GetRefreshTokenFail], StatusCodes.Status401Unauthorized));
+        }
+
+        var result = await _mediator.Send(new RefreshTokenCommand(refreshToken));
+        if (result is null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, Result.Fail([AuthMessageConstant.RefreshTokenFail]));
+        }
+
+        Response.Cookies.Append("access_token", result.AccessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays(1.5)
+        });
+
+        Response.Cookies.Append("refresh_token", result.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays(15)
+        });
+
+        return StatusCode(StatusCodes.Status200OK, Result.Success(AuthMessageConstant.RefreshTokenSuccess));
+
+    }
 }

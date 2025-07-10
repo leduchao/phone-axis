@@ -21,6 +21,9 @@ public static class AuthMessageConstant
     public const string SignInSuccess = "User sign in successfully";
     public const string SignInFail = "User sign in fail";
     public const string SignOutSuccess = "User sign out successfully";
+    public const string RefreshTokenSuccess = "Refresh token successfully";
+    public const string RefreshTokenFail = "Refresh token fail";
+    public const string GetRefreshTokenFail = "Refresh token is invalid";
 
     public const string SendMailSuccess = "Send mail successfully";
     public const string SendMailFail = "Send mail fail";

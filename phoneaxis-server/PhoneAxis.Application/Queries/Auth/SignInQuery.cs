@@ -23,7 +23,9 @@ public class SignInQueryHandler(IAuthService authService, IUserService userServi
         if (signInResult.IsSuccess && signInResult.Data is not null)
         {
             var userInfoResult = await _userService.GetUserBasicInforAsync(signInResult.Data.UserId);
-            return Result<SignInResponse>.Success(new SignInResponse(signInResult.Data.AccessToken, userInfoResult.Data), AuthMessageConstant.SignInSuccess);
+            return Result<SignInResponse>.Success(
+                new SignInResponse(signInResult.Data.TokenModel, userInfoResult.Data), 
+                AuthMessageConstant.SignInSuccess);
         }
 
         return Result<SignInResponse>.Fail(signInResult.Errors, signInResult.StatusCode);

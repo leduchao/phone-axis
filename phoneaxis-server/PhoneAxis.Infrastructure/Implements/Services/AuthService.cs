@@ -53,7 +53,10 @@ public class AuthService(
         if (!result.Succeeded)
             return Result<Application.DTOs.Auth.SignInResult>.Fail([AuthMessageConstant.InvalidPassword], StatusCodes.Status401Unauthorized);
 
-        var signInResult = new Application.DTOs.Auth.SignInResult(appUser.Id, _jwtService.GenerateAccessToken(appUser.Id, command.Email));
+        var signInResult = new Application.DTOs.Auth.SignInResult(
+            appUser.Id,
+            new TokenModel(_jwtService.GenerateAccessToken(appUser.Id, command.Email), _jwtService.GenerateRefreshToken()));
+
         return Result<Application.DTOs.Auth.SignInResult>.Success(signInResult, AuthMessageConstant.SignInSuccess);
     }
 

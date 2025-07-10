@@ -1,3 +1,3 @@
 ﻿namespace PhoneAxis.Application.DTOs.Auth;
 
-public record SignInResult(Guid UserId, string AccessToken);
+public record SignInResult(Guid UserId, TokenModel TokenModel);

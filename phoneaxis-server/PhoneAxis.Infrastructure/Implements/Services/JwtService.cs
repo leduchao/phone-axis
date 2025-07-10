@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using PhoneAxis.Application.Interfaces.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace PhoneAxis.Infrastructure.Implements.Services;
@@ -32,6 +33,15 @@ public class JwtService(IConfiguration configuration, IHttpContextAccessor httpC
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+
+        return Convert.ToBase64String(randomNumber);
     }
 
     public Guid? GetUserIdFromAccessToken()

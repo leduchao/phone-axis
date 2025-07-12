@@ -7,6 +7,7 @@ public sealed record ProductListItem(
     string ProductImage,
     string ProductName,
     string Description,
+    string Slug,
     string Brand,
     decimal OriginalPrice,
     decimal DiscountPercentage)

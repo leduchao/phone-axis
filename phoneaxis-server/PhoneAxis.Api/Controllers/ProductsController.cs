@@ -18,6 +18,13 @@ public class ProductsController(IMediator mediator) : ControllerBase
         return StatusCode(result.StatusCode, result);
     }
 
+    [HttpGet("products/{slug}")]
+    public async Task<IActionResult> GetProductBySlugGuid(string slug)
+    {
+        var result = await _mediator.Send(new GetProductDetailsQuery(slug));
+        return StatusCode(result.StatusCode, result);
+    }
+
     [HttpPost("create-prduct")]
     public async Task<IActionResult> CreateProduct(CreateProdductCommand command)
     {

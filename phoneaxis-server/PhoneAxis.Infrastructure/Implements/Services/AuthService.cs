@@ -104,9 +104,9 @@ public class AuthService(
 
     private async Task AddUserRoleAsync(AppUser appUser)
     {
-        var roleUsers = await _userManager.GetUsersInRoleAsync(Role.Admin);
+        var roleUsers = await _userManager.GetUsersInRoleAsync(Role.ADMIN);
         if (roleUsers is null || roleUsers.Count == 0)
-            await _userManager.AddToRoleAsync(appUser, Role.Admin);
-        else await _userManager.AddToRoleAsync(appUser, Role.User);
+            await _userManager.AddToRoleAsync(appUser, Role.ADMIN);
+        else await _userManager.AddToRoleAsync(appUser, Role.USER);
     }
 }

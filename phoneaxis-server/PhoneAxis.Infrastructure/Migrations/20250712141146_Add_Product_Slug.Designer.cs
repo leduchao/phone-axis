@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhoneAxis.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using PhoneAxis.Infrastructure.Persistence;
 namespace PhoneAxis.Infrastructure.Migrations
 {
     [DbContext(typeof(PhoneAxisDbContext))]
-    partial class PhoneAxisDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712141146_Add_Product_Slug")]
+    partial class Add_Product_Slug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,7 +438,6 @@ namespace PhoneAxis.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductType")
@@ -445,7 +447,6 @@ namespace PhoneAxis.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Slug")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Stock")

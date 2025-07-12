@@ -13,7 +13,7 @@ public sealed record CreateProdductCommand(
     string Description, 
     [Range(0, double.MaxValue)] decimal Price, 
     Guid CategoryId,
-    ProductType Type = ProductType.None, 
+    ProductType Type = ProductType.Phone, 
     [Range(0, 100)] decimal DiscountPercentage = 0) : IRequest<Result>;
 
 public class CreateProductCommandHandler(IBaseRepository<Domain.Entities.Product> productRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateProdductCommand, Result>
@@ -23,12 +23,10 @@ public class CreateProductCommandHandler(IBaseRepository<Domain.Entities.Product
 
     public async Task<Result> Handle(CreateProdductCommand request, CancellationToken cancellationToken)
     {
-        var newproduct = new Domain.Entities.Product
+        var newproduct = new Domain.Entities.Product(request.ProductName, request.Price)
         {
             ImageUrl = request.ProductImage,
-            ProductName = request.ProductName,
             Description = request.Description,
-            Price = request.Price,
             CategoryId = request.CategoryId,
             ProductType = request.Type,
             DiscountPercentage = request.DiscountPercentage

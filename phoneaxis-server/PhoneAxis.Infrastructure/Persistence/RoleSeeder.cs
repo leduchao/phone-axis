@@ -9,15 +9,15 @@ public class RoleSeeder(RoleManager<IdentityRole<Guid>> roleManager)
 
     public async Task SeedRolesAsync()
     {
-        if (!await _roleManager.RoleExistsAsync(Role.Admin))
+        if (!await _roleManager.RoleExistsAsync(Role.ADMIN))
         {
-            var adminRole = new IdentityRole<Guid>(Role.Admin);
+            var adminRole = new IdentityRole<Guid>(Role.ADMIN);
             await _roleManager.CreateAsync(adminRole);
         }
 
-        if (!await _roleManager.RoleExistsAsync(Role.User))
+        if (!await _roleManager.RoleExistsAsync(Role.USER))
         {
-            var userRole = new IdentityRole<Guid>(Role.User);
+            var userRole = new IdentityRole<Guid>(Role.USER);
             await _roleManager.CreateAsync(userRole);
         }
     }

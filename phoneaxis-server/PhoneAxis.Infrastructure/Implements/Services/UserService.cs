@@ -26,7 +26,7 @@ public class UserService(IBaseRepository<MasterUser> masterUserRepository, UserM
         if (appUser is null) 
             return Result<UserBasicInfo>.Fail([$"Not found user with ID={userId}"], StatusCodes.Status404NotFound);
 
-        var isAdminUser = await _userManager.IsInRoleAsync(appUser, Role.Admin);
+        var isAdminUser = await _userManager.IsInRoleAsync(appUser, Role.ADMIN);
         var result = new UserBasicInfo(isAdminUser, masterUser.FirstName, masterUser.ProfilePicture);
 
         return Result<UserBasicInfo>.Success(result, "Get user info successfully");

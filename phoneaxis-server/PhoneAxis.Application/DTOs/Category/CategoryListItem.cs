@@ -1,3 +1,3 @@
 ﻿namespace PhoneAxis.Application.DTOs.Category;
 
-public record CategoryListItem(Guid CategoryId, string CategoryName, string? Description);
+public record CategoryListItem(Guid Id, string CategoryName, string? Description);

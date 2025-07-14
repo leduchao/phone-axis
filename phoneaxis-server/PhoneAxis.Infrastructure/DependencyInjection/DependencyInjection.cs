@@ -8,22 +8,19 @@ using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Infrastructure.Implements.Repositories;
 using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Infrastructure.Implements;
-using System.Data;
-using Microsoft.Data.SqlClient;
+using PhoneAxis.Infrastructure.Constants;
 
 namespace PhoneAxis.Infrastructure.DependencyInjection;
 
 public static class DependencyInjection
 {
-    private const string SqlServerDb = "SqlServerDb";
-
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<PhoneAxisDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString(SqlServerDb)));
+            options.UseSqlServer(configuration.GetConnectionString(ConnectionStringConstant.SQL_SERVER)));
 
         // db connection for dapper using sql server
-        services.AddScoped<IDbConnection>(sp => new SqlConnection(configuration.GetConnectionString(SqlServerDb)));
+        services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
 
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();

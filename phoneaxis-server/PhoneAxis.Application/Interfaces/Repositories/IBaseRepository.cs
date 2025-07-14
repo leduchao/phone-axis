@@ -17,6 +17,8 @@ public interface IBaseRepository<T> where T : BaseEntity
 
     Task<IList<TResult>> GetAllProjected<TResult>(Expression<Func<T, TResult>> projection, bool includeDeleted = false);
 
+    Task<IList<TResult>> GetAllProjected<TResult>(string selectColumns, string? whereClause = null, object? parameters = null, bool includeDeleted = false);
+
     Task<IList<T>> GetAllWithConditionAsync(Expression<Func<T, bool>> condition);
 
     Task<IList<TResult>> GetAllWithConditionProjectedAsync<TResult>(Expression<Func<T, bool>> condition, Expression<Func<T, TResult>> projection);

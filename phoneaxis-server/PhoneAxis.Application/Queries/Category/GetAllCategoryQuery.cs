@@ -13,7 +13,12 @@ public class GetAllCategoryQueryHandler(IBaseRepository<Domain.Entities.Category
 
     public async Task<Result<IList<CategoryListItem>>> Handle(GetAllCategoryQuery request, CancellationToken cancellationToken)
     {
-        var categories = await _categoryRepository.GetAllProjected(c => new CategoryListItem(c.Id, c.CategoryName, c.Description));
+        var categories = await _categoryRepository.GetAllProjected<CategoryListItem>(
+            $"{nameof(Domain.Entities.Category.Id)}, " +
+            $"{nameof(Domain.Entities.Category.CategoryName)}, " +
+            $"{nameof(Domain.Entities.Category.Description)}",
+            null, null);
+
         return Result<IList<CategoryListItem>>.Success(categories, "Get all categories successfully");
     }
 }

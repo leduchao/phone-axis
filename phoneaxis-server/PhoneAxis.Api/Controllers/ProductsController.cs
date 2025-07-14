@@ -25,8 +25,8 @@ public class ProductsController(IMediator mediator) : ControllerBase
         return StatusCode(result.StatusCode, result);
     }
 
-    [HttpPost("create-prduct")]
-    public async Task<IActionResult> CreateProduct(CreateProdductCommand command)
+    [HttpPost("create-product")]
+    public async Task<IActionResult> CreateProduct(CreateProductCommand command)
     {
         var result = await _mediator.Send(command);
         return StatusCode(result.StatusCode, result);

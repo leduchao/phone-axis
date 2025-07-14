@@ -42,6 +42,4 @@ public partial class GetProductDetailsQueryHandler(IBaseRepository<Domain.Entiti
 
         return Result<ProductDetails>.Success(product, "Get product details successfully");
     }
-
-    
 }

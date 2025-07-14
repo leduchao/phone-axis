@@ -4,6 +4,9 @@ namespace PhoneAxis.Domain.Common;
 
 public static partial class RegexHelper
 {
+    [GeneratedRegex("([a-z0-9])([A-Z])")]
+    public static partial Regex SnakeCaseRegex();
+
     [GeneratedRegex(@"[^a-z0-9\s-]")]
     public static partial Regex SlugCleanupRegex();
 

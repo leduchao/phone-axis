@@ -6,7 +6,7 @@ function Footer() {
     <Box
       sx={{
         backgroundColor: "gray",
-        height: "68.5px",
+        height: "64px",
         width: "100%",
         alignContent: "center",
         textAlign: "center",

@@ -11,8 +11,7 @@ const NotFoundPage = () => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      textAlign="center"
-      px={2}
+      mt={10}
     >
       <ErrorOutlineIcon sx={{ fontSize: 100, color: "primary.main", mb: 2 }} />
 

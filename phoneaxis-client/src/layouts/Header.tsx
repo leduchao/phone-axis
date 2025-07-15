@@ -1,24 +1,27 @@
-import AdbIcon from "@mui/icons-material/Adb";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ROUTES } from "../routes";
-import { useEffect, useState } from "react";
-import { authApi } from "../apis/auth-api";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import { userApi } from "../apis/user-api";
-import { UserBasicInfo } from "../models/user-model";
 import {
   AppBar,
-  Avatar,
   Box,
-  Button,
   Container,
   IconButton,
+  InputAdornment,
+  Link,
   Menu,
   MenuItem,
+  TextField,
   Toolbar,
   Tooltip,
   Typography,
 } from "@mui/material";
+import {
+  Clear,
+  PersonOutlineOutlined,
+  Search,
+  ShoppingCartOutlined,
+} from "@mui/icons-material";
 
 interface HeaderItem {
   key: number;
@@ -29,38 +32,43 @@ interface HeaderItem {
 const pages: HeaderItem[] = [
   {
     key: 1,
-    name: "Products",
+    name: "Shop",
     href: "/products",
   },
   {
     key: 2,
-    name: "Pricing",
-    href: "/pricing",
+    name: "Categories",
+    href: "/categories",
   },
   {
     key: 3,
+    name: "About us",
+    href: "/about-us",
+  },
+  {
+    key: 4,
     name: "Blogs",
     href: "/blogs",
   },
+  {
+    key: 5,
+    name: "Reviews",
+    href: "/reviews",
+  },
+  {
+    key: 6,
+    name: "Contact us",
+    href: "/contact-us",
+  },
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Header() {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
-  const [userInfo, setUserInfo] = useState<UserBasicInfo>({
-    isAdmin: false,
-    firstName: "",
-    profilePicture: "",
-  });
+  const [searchValue, setSearchValue] = useState("");
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
@@ -72,54 +80,29 @@ function Header() {
     navigate(href);
   };
 
-  const handleSignOut = () => {
-    authApi.signOut();
-    navigate(ROUTES.SignIn);
+  const handleSearch = () => {
+    alert(`searching for ${searchValue}`);
   };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  const getUserBasicInfo = async () => {
-    try {
-      const result = await userApi.getUserBasicInfo();
-      console.log(result);
-      if (result.isSuccess && result.data)
-        setUserInfo({
-          isAdmin: result.data.isAdmin,
-          firstName: result.data.firstName,
-          profilePicture: result.data.profilePicture,
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getUserBasicInfo();
-  }, []);
 
   return (
     <AppBar position="fixed" color="inherit">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+        <Toolbar disableGutters={true}>
           <Typography
-            variant="h6"
+            variant="h4"
             noWrap
             component="a"
             href={ROUTES.Home}
             sx={{
-              mr: 2,
+              mr: { sm: 1, md: 3, lg: 12 },
               display: { xs: "none", md: "flex" },
               fontFamily: "monospace",
-              fontWeight: 700,
-              color: "inherit",
+              fontWeight: 400,
+              color: "black",
               textDecoration: "none",
             }}
           >
-            PHONEAXIS
+            PhoneAxis
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -156,9 +139,70 @@ function Header() {
                   </Typography>
                 </MenuItem>
               ))}
+              <Box sx={{ pl: 2, mt: 1 }}>
+                <TextField
+                  value={searchValue}
+                  variant="outlined"
+                  label="Search"
+                  size="small"
+                  sx={{ mr: 2 }}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {searchValue && (
+                            <IconButton onClick={() => setSearchValue("")}>
+                              <Clear />
+                            </IconButton>
+                          )}
+                          <IconButton
+                            aria-label="search"
+                            onClick={handleSearch}
+                            edge="end"
+                          >
+                            <Search />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
+                />
+              </Box>
+
+              <Box
+                sx={{
+                  px: 1,
+                  mt: 1,
+                  display: "flex",
+                  justifyContent: "space-around",
+                }}
+              >
+                <Tooltip title="Profile">
+                  <IconButton
+                    sx={{ mr: 1 }}
+                    size="small"
+                    color="inherit"
+                    onClick={() => goToPage(ROUTES.SignIn)}
+                  >
+                    <PersonOutlineOutlined />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Cart">
+                  <IconButton size="small" color="inherit">
+                    <ShoppingCartOutlined />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+
           <Typography
             variant="h5"
             noWrap
@@ -174,67 +218,73 @@ function Header() {
               textDecoration: "none",
             }}
           >
-            PHONEAXIS
+            PhoneAxis
           </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Button
+              <Link
                 key={page.key}
-                color="inherit"
-                onClick={() => goToPage(page.href)}
-                sx={{ my: 2, display: "block" }}
+                href={page.href}
+                sx={{ mx: { md: 1, lg: 2 }, color: "black" }}
+                underline="hover"
               >
                 {page.name}
-              </Button>
+              </Link>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0, display: "flex" }}>
-            <Typography
-              component={"span"}
-              sx={{
-                marginRight: "10px",
-                alignContent: "center",
+
+          <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
+            <TextField
+              value={searchValue}
+              variant="outlined"
+              label="Search"
+              size="small"
+              sx={{ mr: 2 }}
+              onChange={(e) => setSearchValue(e.target.value)}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {searchValue && (
+                        <IconButton onClick={() => setSearchValue("")}>
+                          <Clear />
+                        </IconButton>
+                      )}
+                      <IconButton
+                        aria-label="search"
+                        onClick={handleSearch}
+                        edge="end"
+                      >
+                        <Search />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
-            >
-              {userInfo.firstName}
-            </Typography>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+            />
+
+            <Tooltip title="Profile">
+              <IconButton
+                sx={{ mr: 1 }}
+                size="small"
+                color="inherit"
+                onClick={() => goToPage(ROUTES.SignIn)}
+              >
+                <PersonOutlineOutlined />
               </IconButton>
             </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) =>
-                setting === settings[3] ? (
-                  <MenuItem key={setting} onClick={handleSignOut}>
-                    <Typography sx={{ textAlign: "center" }}>
-                      {setting}
-                    </Typography>
-                  </MenuItem>
-                ) : (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography sx={{ textAlign: "center" }}>
-                      {setting}
-                    </Typography>
-                  </MenuItem>
-                )
-              )}
-            </Menu>
+
+            <Tooltip title="Cart">
+              <IconButton size="small" color="inherit">
+                <ShoppingCartOutlined />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Toolbar>
       </Container>

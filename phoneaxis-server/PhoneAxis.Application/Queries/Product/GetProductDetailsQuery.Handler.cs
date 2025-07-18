@@ -2,6 +2,7 @@
 using PhoneAxis.Application.DTOs.Product;
 using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Domain.Common;
+using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Application.Queries.Product;
 
@@ -17,27 +18,51 @@ public partial class GetProductDetailsQueryHandler(IBaseRepository<Domain.Entiti
             return Result<ProductDetails>.Fail(["Invalid product URL"]);
         }
 
-        var product = await _productRepo.GetByIdProjectedAsync(
-            productId, 
-            p => new ProductDetails(
-                p.Id, 
-                p.ProductCode, 
-                p.ImageUrl, 
-                p.ProductName, 
-                p.Price, 
-                p.Description, 
-                p.Slug, 
-                p.ProductImages.Select(x => x.Url).ToList(), 
-                p.ProductType.ToString(), 
-                p.Category.CategoryName, 
-                p.Sku, 
-                p.DiscountPercentage));
+        string sqlQuery = """
+            SELECT
+                p.Id AS ProductId,
+                p.ProductCode AS ProductCode,
+                p.ImageUrl AS ProductImage,
+                p.ProductName,
+                p.Price AS OriginalPrice,
+                p.Description,
+                p.Slug,
+                pi.Url AS ImageUrl,
+                p.ProductType,
+                c.CategoryName AS Brand,
+                p.Sku,
+                p.DiscountPercentage
+            FROM Products AS p
+            INNER JOIN Categories AS c ON c.ID = p.CategoryId
+            LEFT JOIN ProductImages AS pi ON pi.ProductId = p.Id
+            WHERE p.Id = @ProductId AND p.IsDeleted = @IsDeleted
+            """;
 
-        if (product is null)
+        var rows = await _productRepo.DapperQueryAsync<ProductDetailsRaw>(
+            sqlQuery,
+            new { ProductId = productId, IsDeleted = false });
+
+        if (rows is null || rows.Count == 0)
         {
             return Result<ProductDetails>.Fail(["Product not found"]);
         }
 
-        return Result<ProductDetails>.Success(product, "Get product details successfully");
+        var result = new ProductDetails(
+            rows[0].ProductId, 
+            rows[0].ProductCode, 
+            rows[0].ProductImage, 
+            rows[0].ProductName, 
+            rows[0].OriginalPrice, 
+            rows[0].Description, 
+            rows[0].Slug,
+			[.. rows.Where(r => !string.IsNullOrEmpty(r.ImageUrl))
+                    .Select(r => r.ImageUrl!)
+                    .Distinct()],
+			((ProductType)rows[0].ProductType).ToString(),
+			rows[0].Brand, 
+            rows[0].Sku, 
+            rows[0].DiscountPercentage);
+
+        return Result<ProductDetails>.Success(result, "Get product details successfully");
     }
 }

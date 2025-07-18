@@ -1,4 +1,20 @@
-﻿namespace PhoneAxis.Application.DTOs.Product;
+﻿using PhoneAxis.Domain.Enums;
+
+namespace PhoneAxis.Application.DTOs.Product;
+
+public record ProductDetailsRaw(
+    Guid ProductId,
+    string? ProductCode,
+    string? ProductImage,
+    string ProductName,
+    decimal OriginalPrice,
+    string? Description,
+    string Slug,
+    string? ImageUrl,
+    int ProductType,
+    string Brand,
+    string? Sku,
+    decimal DiscountPercentage);
 
 public record ProductDetails(
     Guid ProductId,

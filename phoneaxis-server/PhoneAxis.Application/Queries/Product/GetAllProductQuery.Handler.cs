@@ -11,16 +11,24 @@ public class GetAllProductQueryHandler(IBaseRepository<Domain.Entities.Product> 
 
     public async Task<Result<IList<ProductListItem>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
     {
-        var products = await _productRepository.GetAllProjected(p => 
-            new ProductListItem(
-                p.Id, 
-                p.ImageUrl, 
+        string sqlQuery = """
+            SELECT 
+                p.Id AS ProductId, 
+                p.ImageUrl AS ProductImage, 
                 p.ProductName, 
-                p.Description ?? string.Empty, 
+                p.Description, 
                 p.Slug, 
-                p.Category.CategoryName, 
-                p.Price, 
-                p.DiscountPercentage));
+                c.CategoryName AS Brand, 
+                p.Price AS OriginalPrice, 
+                p.DiscountPercentage
+            FROM Products AS p
+            JOIN Categories AS c ON p.CategoryId = c.Id
+            WHERE p.IsDeleted = @IsDeleted
+            """;
+
+        var products = await _productRepository.DapperQueryAsync<ProductListItem>(
+            sqlQuery,
+            new { IsDeleted = false });
 
         return Result<IList<ProductListItem>>.Success(products, "Get all product successfully");
     }

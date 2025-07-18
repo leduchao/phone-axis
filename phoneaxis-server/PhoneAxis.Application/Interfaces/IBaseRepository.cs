@@ -1,7 +1,7 @@
 ﻿using PhoneAxis.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace PhoneAxis.Application.Interfaces.Repositories;
+namespace PhoneAxis.Application.Interfaces;
 
 public interface IBaseRepository<T> where T : BaseEntity
 {

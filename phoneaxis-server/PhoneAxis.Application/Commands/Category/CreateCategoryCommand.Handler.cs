@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using PhoneAxis.Application.Interfaces;
-using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Domain.Common;
 
 namespace PhoneAxis.Application.Commands.Category;

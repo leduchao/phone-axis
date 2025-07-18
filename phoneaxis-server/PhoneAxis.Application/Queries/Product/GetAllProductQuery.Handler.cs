@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using PhoneAxis.Application.DTOs.Product;
-using PhoneAxis.Application.Interfaces.Repositories;
+using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Domain.Common;
 
 namespace PhoneAxis.Application.Queries.Product;

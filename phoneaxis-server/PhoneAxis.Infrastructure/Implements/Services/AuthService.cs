@@ -4,7 +4,6 @@ using PhoneAxis.Application.Commands.Auth;
 using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces;
-using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;

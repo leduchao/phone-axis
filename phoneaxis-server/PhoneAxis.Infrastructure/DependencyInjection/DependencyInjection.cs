@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using PhoneAxis.Infrastructure.Persistence;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Infrastructure.Implements.Services;
-using PhoneAxis.Application.Interfaces.Repositories;
-using PhoneAxis.Infrastructure.Implements.Repositories;
 using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Infrastructure.Implements;
 using PhoneAxis.Infrastructure.Constants;

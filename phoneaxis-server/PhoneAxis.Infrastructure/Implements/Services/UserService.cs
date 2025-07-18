@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PhoneAxis.Application.DTOs.User;
-using PhoneAxis.Application.Interfaces.Repositories;
+using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Common;
 using PhoneAxis.Domain.Constants;

@@ -1,13 +1,12 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using PhoneAxis.Application.Interfaces;
-using PhoneAxis.Application.Interfaces.Repositories;
 using PhoneAxis.Domain.Entities;
 using PhoneAxis.Infrastructure.Persistence;
 using System.Data;
 using System.Linq.Expressions;
 
-namespace PhoneAxis.Infrastructure.Implements.Repositories;
+namespace PhoneAxis.Infrastructure.Implements;
 
 public class BaseRepository<T>(PhoneAxisDbContext dbContext, IDbConnectionFactory connectionFactory) : IBaseRepository<T> where T : BaseEntity
 {

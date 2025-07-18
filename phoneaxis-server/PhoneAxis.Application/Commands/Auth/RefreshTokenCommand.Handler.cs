@@ -4,8 +4,6 @@ using PhoneAxis.Application.Interfaces.Services;
 
 namespace PhoneAxis.Application.Commands.Auth;
 
-public record RefreshTokenCommand(string RefreshToken) : IRequest<TokenModel?>;
-
 public class RefreshTokenCommandHandler(IUserService userService, IJwtService jwtService) : IRequestHandler<RefreshTokenCommand, TokenModel?>
 {
     private readonly IUserService _userService = userService;

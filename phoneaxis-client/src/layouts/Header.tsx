@@ -33,32 +33,32 @@ const pages: HeaderItem[] = [
   {
     key: 1,
     name: "Shop",
-    href: "/products",
+    href: `${ROUTES.Shop}`,
   },
   {
     key: 2,
     name: "Categories",
-    href: "/categories",
+    href: `${ROUTES.Categories}`,
   },
   {
     key: 3,
     name: "About us",
-    href: "/about-us",
+    href: `${ROUTES.AboutUs}`,
   },
   {
     key: 4,
     name: "Blogs",
-    href: "/blogs",
+    href: `${ROUTES.Blogs}`,
   },
   {
     key: 5,
     name: "Reviews",
-    href: "/reviews",
+    href: `${ROUTES.Reviews}`,
   },
   {
     key: 6,
     name: "Contact us",
-    href: "/contact-us",
+    href: `${ROUTES.ContactUs}`,
   },
 ];
 

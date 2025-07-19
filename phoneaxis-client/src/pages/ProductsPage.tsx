@@ -1,4 +1,3 @@
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { AppConstants } from "../constants/app-constants";
 import { ProductItem } from "../models/product-item";
@@ -53,32 +52,22 @@ const products: ProductItem[] = [
 ];
 
 const ProductsPage = () => {
-  const addToCart = (product: ProductItem) => {
-    alert(`Add to cart: ${product.title}`);
-  };
-
-  const buyNow = (product: ProductItem) => {
-    alert(`Buy now: ${product.title}`);
-  };
-
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid
-        container
-        spacing={{ xs: 2, sm: 3 }}
-        columns={{ xs: 1, sm: 12, md: 12 }}
-      >
-        {products.map((product, index) => (
-          <Grid size={{ xs: 1, sm: 4, md: 3 }} key={index}>
-            <ProductListItem
-              {...product}
-              onAddToCart={() => addToCart(product)}
-              onBuyNow={() => buyNow(product)}
-            />
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+    <Grid
+      container
+      spacing={{ xs: 2, sm: 3 }}
+      columns={{ xs: 1, sm: 12, md: 12 }}
+    >
+      {products.map((product, index) => (
+        <Grid size={{ xs: 1, sm: 4, md: 3 }} key={index}>
+          <ProductListItem
+            image={`${product.imageUrl}`}
+            name={`${product.title}`}
+            originalPrice={product.originalPrice}
+          />
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

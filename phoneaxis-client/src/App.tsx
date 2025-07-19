@@ -16,7 +16,7 @@ const App = () => {
           <Route path={ROUTES.SignIn} element={<SignIn />} />
           <Route path={ROUTES.SignUp} element={<SignUp />} />
           <Route path={ROUTES.Home} element={<HomePage />} />
-          <Route path={ROUTES.Products} element={<ProductsPage />} />
+          <Route path={ROUTES.Shop} element={<ProductsPage />} />
           <Route path={ROUTES.Blogs} element={<BlogPage />} />
           <Route path={ROUTES.NotFound} element={<NotFoundPage />} />
         </Route>

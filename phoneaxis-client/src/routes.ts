@@ -2,8 +2,11 @@ export const ROUTES = {
   Home: "/",
   SignIn: "/sign-in",
   SignUp: "/sign-up",
-  Products: "/products",
-  Pricing: "/pricing",
+  Shop: "/shop",
+  Categories: "/categories",
+  AboutUs: "/contact-us",
   Blogs: "/blogs",
+  ContactUs: "/contact-us",
+  Reviews: "/reviews",
   NotFound: "*",
 };

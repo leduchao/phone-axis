@@ -9,6 +9,7 @@ export interface SignUpRequest {
   email: string;
   password: string;
   terms: boolean;
+  receiveMail: boolean;
 }
 
 export interface SignInResponse {

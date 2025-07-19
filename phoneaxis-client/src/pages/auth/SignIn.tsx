@@ -2,16 +2,12 @@ import {
   TextField,
   Typography,
   Box,
-  FormControlLabel,
-  Checkbox,
   Button,
-  Divider,
   Link,
   Container,
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router";
 import { authApi } from "../../apis/auth-api";
@@ -60,18 +56,18 @@ function SignIn() {
       <Typography
         component="div"
         variant="h3"
-        sx={{
-          mb: 6,
-          fontWeight: "400",
-          textAlign: "center",
-        }}
+        mb={6}
+        fontWeight={"400"}
+        textAlign={"center"}
       >
         Sign In
       </Typography>
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}
-        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        display={"flex"}
+        flexDirection={"column"}
+        gap={2}
       >
         <Controller
           name="email"
@@ -138,58 +134,31 @@ function SignIn() {
             />
           )}
         ></Controller>
-        <Controller
-          name="rememberMe"
-          control={control}
-          render={({ field }) => (
-            <FormControlLabel
-              control={
-                <Checkbox {...field} checked={field.value} color="primary" />
-              }
-              label="Remember me"
-              className={errors.rememberMe ? "text-red-600" : ""}
-            />
-          )}
-        />
-        <Button type="submit" fullWidth variant="contained">
-          Sign in
-        </Button>
         <Link
-          component="button"
-          type="button"
+          href="/forgot-password"
+          component="a"
           variant="body2"
-          sx={{
-            alignSelf: "center",
-            fontSize: "1rem",
-            my: 1,
-          }}
+          alignSelf={"flex-end"}
         >
           Forgot your password?
         </Link>
+        <Button
+          sx={{ mt: 1, mb: 2 }}
+          type="submit"
+          fullWidth
+          variant="contained"
+        >
+          Sign in
+        </Button>
       </Box>
 
-      <Divider sx={{ mb: 1 }}>
-        <Typography sx={{ color: "text.secondary" }}>or</Typography>
-      </Divider>
-
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={() => alert("Sign up with Google")}
-          startIcon={<GoogleIcon />}
-        >
-          Sign up with Google
-        </Button>
+      <Box component={"div"} display={"flex"} justifyContent={"space-between"}>
         <Typography sx={{ textAlign: "center" }}>
           Don't have an account?{" "}
-          <Link
-            href={ROUTES.SignUp}
-            sx={{ alignSelf: "center", fontSize: "1rem" }}
-          >
-            Sign up
-          </Link>
         </Typography>
+        <Link href={ROUTES.SignUp} alignSelf={"center"}>
+          Sign up
+        </Link>
       </Box>
     </Container>
   );

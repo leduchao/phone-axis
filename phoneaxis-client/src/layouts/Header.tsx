@@ -105,7 +105,50 @@ function Header() {
             PhoneAxis
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href={`${ROUTES.Home}`}
+            sx={{
+              mr: 2,
+              display: { xs: "flex", md: "none" },
+              flexGrow: 1,
+              fontFamily: "monospace",
+              fontWeight: 700,
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            PhoneAxis
+          </Typography>
+
+          <Box
+            sx={{
+              px: 1,
+              display: { xs: "flex", md: "none" },
+              justifyContent: "space-around",
+            }}
+          >
+            <Tooltip title="Profile">
+              <IconButton
+                sx={{ mr: 1 }}
+                size="small"
+                color="inherit"
+                onClick={() => goToPage(ROUTES.SignIn)}
+              >
+                <PersonOutlineOutlined />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Cart">
+              <IconButton size="small" color="inherit">
+                <ShoppingCartOutlined />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -139,7 +182,7 @@ function Header() {
                   </Typography>
                 </MenuItem>
               ))}
-              <Box sx={{ pl: 2, mt: 1 }}>
+              <Box sx={{ pl: 2, my: 1 }}>
                 <TextField
                   value={searchValue}
                   variant="outlined"
@@ -174,52 +217,8 @@ function Header() {
                   }}
                 />
               </Box>
-
-              <Box
-                sx={{
-                  px: 1,
-                  mt: 1,
-                  display: "flex",
-                  justifyContent: "space-around",
-                }}
-              >
-                <Tooltip title="Profile">
-                  <IconButton
-                    sx={{ mr: 1 }}
-                    size="small"
-                    color="inherit"
-                    onClick={() => goToPage(ROUTES.SignIn)}
-                  >
-                    <PersonOutlineOutlined />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Cart">
-                  <IconButton size="small" color="inherit">
-                    <ShoppingCartOutlined />
-                  </IconButton>
-                </Tooltip>
-              </Box>
             </Menu>
           </Box>
-
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href={`${ROUTES.Home}`}
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            PhoneAxis
-          </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (

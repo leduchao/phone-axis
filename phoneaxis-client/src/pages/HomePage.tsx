@@ -4,13 +4,13 @@ import {
   AvatarGroup,
   Box,
   Button,
-  Divider,
   Grid,
   Typography,
 } from "@mui/material";
 import { ROUTES } from "../routes";
-import ProductListItem from "../components/ProductListItem";
 import Banner from "../components/Banner";
+import ProductList from "../components/ProductList";
+import { ProductItem } from "../models/product-item";
 
 const itemData = [
   {
@@ -61,30 +61,46 @@ const productType = [
   },
 ];
 
-const products = [
+const avatars = [
+  {
+    alt: "Remy Sharp",
+    src: "https://cdn.prod.website-files.com/65dc3354ff2046f1c1a5251f/660b969006d063b43f2a7fb0_hr-03.jpg",
+  },
+  {
+    alt: "Travis Howard",
+    src: "https://cdn.prod.website-files.com/65dc3354ff2046f1c1a5251f/660b9690fb0a396cb236af63_hr-01.jpg",
+  },
+  {
+    alt: "Agnes Walker",
+    src: "https://cdn.prod.website-files.com/65dc3354ff2046f1c1a5251f/660b969144b9468ed51d6bed_hr-02.jpg",
+  },
+];
+
+const products: ProductItem[] = [
   {
     image:
       "https://cdn.prod.website-files.com/66066cd26f345c1bf92964bb/660a78c4bec017e77389bc5c_product-thumb-09-p-500.jpg",
     name: "NexGen Galaxy X",
-    price: 599.0,
+    originalPrice: 599.0,
+    discountPercentage: 50,
   },
   {
     image:
       "https://cdn.prod.website-files.com/66066cd26f345c1bf92964bb/660a7ee7206686f4fca755d6_product-thumb-10.jpg",
     name: "VisionPro Compact Camera",
-    price: 680.0,
+    originalPrice: 680.0,
   },
   {
     image:
       "https://cdn.prod.website-files.com/66066cd26f345c1bf92964bb/660bae43dac26f3ad29ff86f_product-thumb-11-p-500.jpg",
     name: "ZenithStream Ultrabook",
-    price: 620.0,
+    originalPrice: 620.0,
   },
   {
     image:
       "https://cdn.prod.website-files.com/66066cd26f345c1bf92964bb/660bae336cc1437adb60d881_product-thumb-15.jpg",
     name: "SonicStream Mini Speaker",
-    price: 160.0,
+    originalPrice: 160.0,
   },
 ];
 
@@ -144,13 +160,9 @@ function HomePage() {
               )}
               total={3521}
             >
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-              <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-              <Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
-              <Avatar
-                alt="Trevor Henderson"
-                src="/static/images/avatar/5.jpg"
-              />
+              {avatars.map((item) => (
+                <Avatar alt={`${item.alt}`} src={`${item.src}`} />
+              ))}
             </AvatarGroup>
             <Box>
               <Typography variant="body2">
@@ -170,7 +182,7 @@ function HomePage() {
                 background:
                   "linear-gradient(180deg,rgba(255, 255, 255, 1) 0%, rgba(169, 219, 218, 1) 100%)",
               }}
-              height={"300px"}
+              height={"350px"}
               display={{ xs: "none", md: "flex" }}
               justifyContent={"center"}
               alignItems={"center"}
@@ -178,7 +190,7 @@ function HomePage() {
             >
               <Box
                 component={"img"}
-                height={"90%"}
+                height={"85%"}
                 src={`${itemData[0].img}`}
                 alt={itemData[0].title}
                 loading="lazy"
@@ -247,26 +259,12 @@ function HomePage() {
         </Box>
 
         <Box sx={{ backgroundColor: "" }}>
-          <Box display={"flex"} justifyContent={"space-between"}>
-            <Typography variant="h4">Best Selling Products</Typography>
-            <Button href={`${ROUTES.Shop}`}>
-              View All <ArrowForward sx={{ ml: 1 }}></ArrowForward>
-            </Button>
-          </Box>
-
-          <Divider sx={{ my: 2 }}></Divider>
-
-          <Grid container columns={{ xs: 2, md: 4 }} spacing={3}>
-            {products.map((item) => (
-              <Grid size={1}>
-                <ProductListItem
-                  image={`${item.image}`}
-                  name={`${item.name}`}
-                  originalPrice={item.price}
-                ></ProductListItem>
-              </Grid>
-            ))}
-          </Grid>
+          <ProductList
+            products={products}
+            title="Best Selling Products"
+            hasButton={true}
+            buttonText="View all"
+          ></ProductList>
 
           <Grid container columns={{ xs: 1, md: 3 }} spacing={3} my={15}>
             {banners.map((item) => (

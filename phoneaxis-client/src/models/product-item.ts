@@ -1,8 +1,6 @@
 export interface ProductItem {
-  title: string;
-  description: string;
-  promotionalPrice: number;
+  image: string;
+  name: string;
   originalPrice: number;
   discountPercentage?: number;
-  imageUrl?: string;
 }

@@ -1,19 +1,22 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Chip, Typography } from "@mui/material";
 import { ROUTES } from "../routes";
-
-interface ProductItemProps {
-  image: string;
-  name: string;
-  originalPrice: number;
-  discountPercentage?: number;
-}
 
 const ProductListItem = ({
   image,
   name,
   originalPrice,
   discountPercentage,
-}: ProductItemProps) => {
+}: {
+  image: string;
+  name: string;
+  originalPrice: number;
+  discountPercentage?: number;
+}) => {
+  const getFinalPrice = () => {
+    return !discountPercentage || discountPercentage === 0
+      ? originalPrice
+      : originalPrice - originalPrice * (discountPercentage / 100);
+  };
   return (
     <Box
       component={"a"}
@@ -26,9 +29,25 @@ const ProductListItem = ({
     >
       <Box component={"img"} src={`${image}`} height={"300px"}></Box>
       <Typography>{name}</Typography>
-      <Typography>$ {originalPrice} USD</Typography>
-      {/* <Typography>$ {promotionalPrice} USD</Typography> */}
-      {discountPercentage && <Typography>{discountPercentage}%</Typography>}
+      <Box display={"flex"} textAlign={"center"}>
+        <Typography mr={1}>$ {getFinalPrice()} USD</Typography>
+        {discountPercentage && (
+          <Box display={"flex"}>
+            <Typography
+              color="gray"
+              sx={{ textDecoration: "line-through" }}
+              mr={1}
+            >
+              $ {originalPrice} USD
+            </Typography>{" "}
+            <Chip
+              size="small"
+              label={`${discountPercentage}%`}
+              color="error"
+            ></Chip>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };

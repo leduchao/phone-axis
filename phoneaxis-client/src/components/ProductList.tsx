@@ -28,7 +28,13 @@ const ProductList = ({
 
       <Divider sx={{ my: 2 }}></Divider>
 
-      <Grid container columns={{ xs: 2, md: 4 }} spacing={3}>
+      <Grid
+        container
+        columns={{ xs: 2, md: 3, lg: 4 }}
+        spacing={3}
+        mt={4}
+        sx={{ mx: "-22px" }}
+      >
         {products.map((item) => (
           <Grid size={1}>
             <ProductListItem

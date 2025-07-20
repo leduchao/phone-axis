@@ -10,6 +10,7 @@ function Content() {
     <Box
       sx={{
         mt: `${headerHeight}px`,
+        backgroundColor: "#fafbfc",
       }}
     >
       <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3 } }}>

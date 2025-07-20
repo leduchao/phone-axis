@@ -27,7 +27,13 @@ const ProductListItem = ({
       flexDirection={"column"}
       sx={{ textDecoration: "none", color: "black" }}
     >
-      <Box component={"img"} src={`${image}`} height={"300px"}></Box>
+      <Box
+        component={"img"}
+        src={`${image}`}
+        height={"400px"}
+        borderRadius={1}
+        mb={2}
+      ></Box>
       <Typography>{name}</Typography>
       <Box display={"flex"} textAlign={"center"}>
         <Typography mr={1}>$ {getFinalPrice()} USD</Typography>

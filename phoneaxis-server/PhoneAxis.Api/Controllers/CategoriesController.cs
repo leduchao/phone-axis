@@ -17,13 +17,23 @@ public class CategoriesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllCategory()
     {
         var result = await _mediator.Send(new GetAllCategoryQuery());
-        return StatusCode(result.StatusCode, result);
+        if (!result.IsSuccess)
+        {
+            return result.ToErrorActionResult();
+        }
+
+        return Ok(result);
     }
 
     [HttpPost("create-category")]
     public async Task<IActionResult> CreateCategory(CreateCategoryCommand command)
     {
         var result = await _mediator.Send(command);
-        return StatusCode(result.StatusCode, result);
+        if (!result.IsSuccess)
+        {
+            return result.ToErrorActionResult();
+        }
+
+        return Ok(result);
     }
 }

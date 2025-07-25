@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.Queries.User;
+using PhoneAxis.Domain.Common;
 
 namespace PhoneAxis.Api.Controllers;
 
@@ -15,14 +17,24 @@ public class UsersController(IMediator mediator) : ControllerBase
     [HttpGet("get-all-users")]
     public async Task<IActionResult> GetAllUsers()
     {
-        var response = await _mediator.Send(new GetAllUserQuery());
-        return StatusCode(response.StatusCode, response);
+        var result = await _mediator.Send(new GetAllUserQuery());
+        if (!result.IsSuccess)
+        {
+            return result.ToErrorActionResult();
+        }
+
+        return Ok(result);
     }
 
     [HttpGet("get-user-basic-info")]
     public async Task<IActionResult> GetUserBasicInfo()
     {
-        var response = await _mediator.Send(new GetUserBasicInfoQuery());
-        return StatusCode(response.StatusCode, response);
+        var result = await _mediator.Send(new GetUserBasicInfoQuery());
+        if (!result.IsSuccess)
+        {
+            return result.ToErrorActionResult();
+        }
+
+        return Ok(result);
     }
 }

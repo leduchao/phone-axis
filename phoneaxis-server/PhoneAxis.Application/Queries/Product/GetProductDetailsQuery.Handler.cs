@@ -15,7 +15,7 @@ public partial class GetProductDetailsQueryHandler(IBaseRepository<Domain.Entiti
         var match = RegexHelper.SlugProductIdRegex().Match(request.Slug);
         if (!match.Success || !Guid.TryParse(match.Value, out var productId))
         {
-            return Result<ProductDetails>.Fail(["Invalid product URL"]);
+            return Result<ProductDetails>.Fail(ErrorCode.BadRequest, ["Invalid product URL"]);
         }
 
         string sqlQuery = """
@@ -44,7 +44,7 @@ public partial class GetProductDetailsQueryHandler(IBaseRepository<Domain.Entiti
 
         if (rows is null || rows.Count == 0)
         {
-            return Result<ProductDetails>.Fail(["Product not found"]);
+            return Result<ProductDetails>.Fail(ErrorCode.NotFound, ["Product not found"]);
         }
 
         var result = new ProductDetails(

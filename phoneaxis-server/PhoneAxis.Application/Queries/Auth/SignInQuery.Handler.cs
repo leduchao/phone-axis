@@ -3,6 +3,7 @@ using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Common;
+using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Application.Queries.Auth;
 
@@ -22,7 +23,7 @@ public class SignInQueryHandler(IAuthService authService, IUserService userServi
                 AuthMessageConstant.SignInSuccess);
         }
 
-        return Result<SignInResponse>.Fail(signInResult.Errors, signInResult.StatusCode);
+        return Result<SignInResponse>.Fail(ErrorCode.Unauthorized, signInResult.ErrorMessages);
 
     }
 }

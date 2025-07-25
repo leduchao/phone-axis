@@ -1,11 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PhoneAxis.Api.Constants;
+using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.Commands.Auth;
 using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.User;
 using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;
+using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Api.Controllers;
 
@@ -22,90 +25,76 @@ public class AuthController(IMediator mediator) : ControllerBase
         var result = await _mediator.Send(query);
         if (!result.IsSuccess)
         {
-            Response.Cookies.Delete("access_token");
-            return StatusCode(result.StatusCode, result);
+            RemoveCookie(CookieKeyConstant.ACCESS_TOKEN);
+            return result.ToErrorActionResult();
         }
 
-        if (result.Data is not null && result.Data.TokenModel is not null)
+        else if (result.Data is not null && result.Data.TokenModel is not null)
         {
-            Response.Cookies.Append("access_token", result.Data.TokenModel.AccessToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddDays(1.5)
-            });
+            SetCookie(CookieKeyConstant.ACCESS_TOKEN, result.Data.TokenModel.AccessToken, DateTimeOffset.UtcNow.AddDays(1.5));
+            SetCookie(CookieKeyConstant.REFRESH_TOKEN, result.Data.TokenModel.RefreshToken, DateTimeOffset.UtcNow.AddDays(15));
 
-            Response.Cookies.Append("refresh_token", result.Data.TokenModel.RefreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddDays(15)
-            });
-
-            var successResult = Result<UserBasicInfo>.Success(result.Data.UserInfo, result.Message);
-            return StatusCode(successResult.StatusCode, successResult);
+            return Ok(Result<UserBasicInfo>.Success(result.Data.UserInfo, result.SuccessMessage));
         }
 
-        return StatusCode(StatusCodes.Status400BadRequest, Result.Fail([AuthMessageConstant.SignInFail]));
+        return BadRequest(Result.Fail(ErrorCode.Unauthorized, [AuthMessageConstant.SignInFail]));
     }
 
     [HttpPost("sign-up")]
     public async Task<IActionResult> SignUp(SignUpCommand command)
     {
         var result = await _mediator.Send(command);
-        return StatusCode(result.StatusCode, result);
+        if (!result.IsSuccess) return result.ToErrorActionResult();
+
+        return Created();
     }
 
     [HttpPost("sign-out")]
     public IActionResult SignOutUser()
     {
-        Response.Cookies.Delete("access_token", new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Path = "/"
-        });
-
-        return StatusCode(StatusCodes.Status200OK, Result.Success(AuthMessageConstant.SignOutSuccess));
+        RemoveCookie(CookieKeyConstant.ACCESS_TOKEN);
+        return Ok(Result.Success(AuthMessageConstant.SignOutSuccess));
     }
 
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken()
     {
-        var refreshToken = Request.Cookies["refresh_token"];
+        var refreshToken = GetCookie(CookieKeyConstant.REFRESH_TOKEN);
         if (string.IsNullOrEmpty(refreshToken))
         {
-            return StatusCode(
-                StatusCodes.Status401Unauthorized,
-                Result.Fail([AuthMessageConstant.GetRefreshTokenFail], StatusCodes.Status401Unauthorized));
+            return Unauthorized(Result.Fail(ErrorCode.Unauthorized, [AuthMessageConstant.GetRefreshTokenFail]));
         }
 
         var result = await _mediator.Send(new RefreshTokenCommand(refreshToken));
         if (result is null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, Result.Fail([AuthMessageConstant.RefreshTokenFail]));
+            return BadRequest(Result.Fail(ErrorCode.BadRequest, [AuthMessageConstant.RefreshTokenFail]));
         }
 
-        Response.Cookies.Append("access_token", result.AccessToken, new CookieOptions
+        SetCookie(CookieKeyConstant.ACCESS_TOKEN, result.AccessToken, DateTimeOffset.UtcNow.AddDays(1.5));
+        SetCookie(CookieKeyConstant.REFRESH_TOKEN, result.RefreshToken, DateTimeOffset.UtcNow.AddDays(15));
+
+        return Ok(Result.Success(AuthMessageConstant.RefreshTokenSuccess));
+    }
+
+    private string? GetCookie(string key)
+    {
+        return Request.Cookies[key];
+    }
+
+    private void SetCookie(string key, string value, DateTimeOffset expires)
+    {
+        Response.Cookies.Append(key, value, new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(1.5)
+            Expires = expires
         });
+    }
 
-        Response.Cookies.Append("refresh_token", result.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(15)
-        });
-
-        return StatusCode(StatusCodes.Status200OK, Result.Success(AuthMessageConstant.RefreshTokenSuccess));
-
+    private void RemoveCookie(string key)
+    {
+        Response.Cookies.Delete(key);
     }
 }

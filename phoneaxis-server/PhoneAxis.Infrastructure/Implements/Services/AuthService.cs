@@ -9,6 +9,7 @@ using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;
 using PhoneAxis.Domain.Constants;
 using PhoneAxis.Domain.Entities;
+using PhoneAxis.Domain.Enums;
 using PhoneAxis.Infrastructure.Models;
 using PhoneAxis.Infrastructure.Utils;
 
@@ -46,11 +47,11 @@ public class AuthService(
     {
         var appUser = await _userManager.FindByEmailAsync(command.Email);
         if (appUser is null)
-            return Result<Application.DTOs.Auth.SignInResult>.Fail([AuthMessageConstant.InvalidCredentials], StatusCodes.Status404NotFound);
+            return Result<Application.DTOs.Auth.SignInResult>.Fail(ErrorCode.NotFound, [AuthMessageConstant.InvalidCredentials]);
 
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, command.Password, false);
         if (!result.Succeeded)
-            return Result<Application.DTOs.Auth.SignInResult>.Fail([AuthMessageConstant.InvalidPassword], StatusCodes.Status401Unauthorized);
+            return Result<Application.DTOs.Auth.SignInResult>.Fail(ErrorCode.BadRequest, [AuthMessageConstant.InvalidPassword]);
 
         var signInResult = new Application.DTOs.Auth.SignInResult(
             appUser.Id,
@@ -70,7 +71,7 @@ public class AuthService(
         {
             var existedUser = await _userManager.FindByEmailAsync(command.Email);
             if (existedUser is not null)
-                return Result.Fail([AuthMessageConstant.UserAlreadyExists]);
+                return Result.Fail(ErrorCode.Conflict, [AuthMessageConstant.UserAlreadyExists]);
         }
 
         var (masterUser, appUser) = GenerateBothTypesOfUser(command);
@@ -79,14 +80,14 @@ public class AuthService(
         if (!result.Succeeded)
         {
             var errors = result.Errors.Select(e => e.Description).ToArray();
-            return Result.Fail(errors);
+            return Result.Fail(ErrorCode.Unauthorized, errors);
         }
 
         await AddUserRoleAsync(appUser);
         await _masterUserRepo.AddAsync(masterUser);
         await _unitOfWork.SaveChangesAsync();
 
-        return Result.Success(AuthMessageConstant.SignUpSuccess, StatusCodes.Status201Created);
+        return Result.Success(AuthMessageConstant.SignUpSuccess);
     }
 
     private static (MasterUser, AppUser) GenerateBothTypesOfUser(SignUpCommand command)

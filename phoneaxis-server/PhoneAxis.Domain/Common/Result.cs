@@ -1,60 +1,62 @@
-﻿using System.Net;
+﻿using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Domain.Common;
 
-public sealed class Result<T>(bool isSuccess, int statusCode)
+public sealed class Result<T>(bool isSuccess)
 {
     public bool IsSuccess { get; set; } = isSuccess;
 
-    public int StatusCode { get; set; } = statusCode;
-
-    public string? Message { get; set; }
-
-    public string[] Errors { get; set; } = [];
-
     public T? Data { get; set; }
 
-    public static Result<T> Success(T? data, string? message, int statusCode = (int)HttpStatusCode.OK)
+    public string? SuccessMessage { get; set; }
+
+    public ErrorCode? ErrorCode { get; set; }
+
+    public string[] ErrorMessages { get; set; } = [];
+
+    public static Result<T> Success(T? data, string? successMessage)
     {
-        return new(true, statusCode)
+        return new(true)
         {
-            Message = message,
             Data = data,
+            SuccessMessage = successMessage
         };
     }
 
-    public static Result<T> Fail(string[] errors, int statusCode = (int)HttpStatusCode.BadRequest)
+    public static Result<T> Fail(ErrorCode errorCode, string[] errorMessages)
     {
-        return new(false, statusCode)
+        return new(false)
         {
-            Errors = errors,
+            ErrorCode = errorCode,
+            ErrorMessages = errorMessages
         };
     }
 }
 
-public sealed class Result(bool isSuccess, int statusCode)
+public sealed class Result(bool isSuccess)
 {
     public bool IsSuccess { get; set; } = isSuccess;
 
-    public int StatusCode { get; set; } = statusCode;
+    public ErrorCode? ErrorCode { get; set; }
 
-    public string? Message { get; set; }
+    public string? SuccessMessage { get; set; }
 
-    public string[] Errors { get; set; } = [];
+    public string[] ErrorMessages { get; set; } = [];
 
-    public static Result Success(string? message, int statusCode = (int)HttpStatusCode.OK)
+    public static Result Success(string? successMessage)
     {
-        return new(true, statusCode)
+        return new(true)
         {
-            Message = message,
+            SuccessMessage = successMessage,
         };
     }
 
-    public static Result Fail(string[] errors, int statusCode = (int)HttpStatusCode.BadRequest)
+    public static Result Fail(ErrorCode errorCode, string[] errorMessages)
     {
-        return new(false, statusCode)
+        return new(false)
         {
-            Errors = errors,
+            ErrorCode = errorCode,
+            ErrorMessages = errorMessages
         };
     }
 }

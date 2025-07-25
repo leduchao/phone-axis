@@ -7,6 +7,7 @@ using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Common;
 using PhoneAxis.Domain.Constants;
 using PhoneAxis.Domain.Entities;
+using PhoneAxis.Domain.Enums;
 using PhoneAxis.Infrastructure.Models;
 
 namespace PhoneAxis.Infrastructure.Implements.Services;
@@ -20,11 +21,11 @@ public class UserService(IBaseRepository<MasterUser> masterUserRepository, UserM
     {
         var masterUser = await _masterUserRepository.GetByIdProjectedAsync(userId, p => new { p.FirstName, p.ProfilePicture });
         if (masterUser is null) 
-            return Result<UserBasicInfo>.Fail([$"Not found master user with ID={userId}"], StatusCodes.Status404NotFound);
+            return Result<UserBasicInfo>.Fail(ErrorCode.NotFound, [$"Not found master user with ID={userId}"]);
 
         var appUser = await _userManager.FindByIdAsync(userId.ToString());
         if (appUser is null) 
-            return Result<UserBasicInfo>.Fail([$"Not found user with ID={userId}"], StatusCodes.Status404NotFound);
+            return Result<UserBasicInfo>.Fail(ErrorCode.NotFound, [$"Not found user with ID={userId}"]);
 
         var isAdminUser = await _userManager.IsInRoleAsync(appUser, Role.ADMIN);
         var result = new UserBasicInfo(isAdminUser, masterUser.FirstName, masterUser.ProfilePicture);

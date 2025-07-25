@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.DependencyInjection;
 using PhoneAxis.Domain.Common;
+using PhoneAxis.Domain.Enums;
 using PhoneAxis.Infrastructure.DependencyInjection;
 using PhoneAxis.Infrastructure.Models;
 using PhoneAxis.Infrastructure.Persistence;
@@ -23,7 +24,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.InvalidModelStateResponseFactory = context =>
     {
         var errors = PresentationUtils.GetModelStateErrors(context.ModelState);
-        return new BadRequestObjectResult(Result.Fail([.. errors]));
+        return new BadRequestObjectResult(Result.Fail(ErrorCode.BadRequest, [.. errors]));
     };
 });
 

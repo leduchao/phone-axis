@@ -2,6 +2,7 @@
 using PhoneAxis.Application.DTOs.User;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Common;
+using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Application.Queries.User;
 
@@ -16,6 +17,6 @@ public class GetUserBasicInfoQueryHandler(IUserService userService, IJwtService 
         if (userId is not null) 
             return await _userService.GetUserBasicInforAsync(userId.Value);
 
-        return Result<UserBasicInfo>.Fail(["User ID not found in token."]);
+        return Result<UserBasicInfo>.Fail(ErrorCode.BadRequest, ["User ID not found in token."]);
     }
 }

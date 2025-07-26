@@ -2,14 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PhoneAxis.Api.Constants;
-using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.Commands.Auth;
-using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.User;
 using PhoneAxis.Application.Errors;
 using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;
-using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Api.Controllers;
 

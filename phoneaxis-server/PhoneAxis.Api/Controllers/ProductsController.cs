@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.Commands.Product;
 using PhoneAxis.Application.Queries.Product;
 
@@ -16,9 +15,9 @@ public class ProductsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllProducts()
     {
         var result = await _mediator.Send(new GetAllProductQuery());
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
-            return result.ToErrorActionResult();
+            return BadRequest(result);
         }
 
         return Ok(result);
@@ -28,9 +27,9 @@ public class ProductsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetProductBySlugGuid(string slug)
     {
         var result = await _mediator.Send(new GetProductDetailsQuery(slug));
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
-            return result.ToErrorActionResult();
+            return BadRequest(result);
         }
 
         return Ok(result);
@@ -40,9 +39,9 @@ public class ProductsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateProduct(CreateProductCommand command)
     {
         var result = await _mediator.Send(command);
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
-            return result.ToErrorActionResult();
+            return BadRequest(result);
         }
 
         return Ok(result);

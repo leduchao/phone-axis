@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.DependencyInjection;
 using PhoneAxis.Domain.Common;
-using PhoneAxis.Domain.Enums;
 using PhoneAxis.Infrastructure.DependencyInjection;
 using PhoneAxis.Infrastructure.Models;
 using PhoneAxis.Infrastructure.Persistence;
@@ -24,7 +23,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.InvalidModelStateResponseFactory = context =>
     {
         var errors = PresentationUtils.GetModelStateErrors(context.ModelState);
-        return new BadRequestObjectResult(Result.Fail(ErrorCode.BadRequest, [.. errors]));
+        return new BadRequestObjectResult(Result.Failure([.. errors]));
     };
 });
 
@@ -89,10 +88,10 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
             if (context.Request.Cookies.TryGetValue("access_token", out var token))
             {
                 context.Token = token;
-			}
+            }
 
             return Task.CompletedTask;
-		}
+        }
     };
 });
 
@@ -113,7 +112,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowSpecificOrigins");
+app.UseCors("AllowAllOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

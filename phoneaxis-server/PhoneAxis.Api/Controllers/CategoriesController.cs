@@ -17,9 +17,9 @@ public class CategoriesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllCategory()
     {
         var result = await _mediator.Send(new GetAllCategoryQuery());
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
-            return result.ToErrorActionResult();
+            return BadRequest(result);
         }
 
         return Ok(result);
@@ -29,9 +29,9 @@ public class CategoriesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateCategory(CreateCategoryCommand command)
     {
         var result = await _mediator.Send(command);
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
-            return result.ToErrorActionResult();
+            return BadRequest(result);
         }
 
         return Ok(result);

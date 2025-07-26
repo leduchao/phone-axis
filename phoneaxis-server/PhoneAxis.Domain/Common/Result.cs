@@ -1,62 +1,41 @@
-﻿using PhoneAxis.Domain.Enums;
+﻿namespace PhoneAxis.Domain.Common;
 
-namespace PhoneAxis.Domain.Common;
-
-public sealed class Result<T>(bool isSuccess)
+public sealed class Result<TData>
 {
-    public bool IsSuccess { get; set; } = isSuccess;
+    private readonly bool _isSuccess;
 
-    public T? Data { get; set; }
+    public bool Succeeded => _isSuccess;
 
-    public string? SuccessMessage { get; set; }
+    public Error[] Errors { get; init; }
 
-    public ErrorCode? ErrorCode { get; set; }
+    public TData? Data { get; set; }
 
-    public string[] ErrorMessages { get; set; } = [];
-
-    public static Result<T> Success(T? data, string? successMessage)
+    private Result(bool isSuccess, Error[] errors)
     {
-        return new(true)
-        {
-            Data = data,
-            SuccessMessage = successMessage
-        };
+        _isSuccess = isSuccess;
+        Errors = errors;
     }
 
-    public static Result<T> Fail(ErrorCode errorCode, string[] errorMessages)
-    {
-        return new(false)
-        {
-            ErrorCode = errorCode,
-            ErrorMessages = errorMessages
-        };
-    }
+    public static Result<TData> Success(TData? data) => new(true, [Error.None]) { Data = data };
+
+    public static Result<TData> Failure(Error[] errors) => new(false, errors);
 }
 
-public sealed class Result(bool isSuccess)
+public sealed class Result
 {
-    public bool IsSuccess { get; set; } = isSuccess;
+    private readonly bool _isSuccess;
 
-    public ErrorCode? ErrorCode { get; set; }
+    public bool Succeeded => _isSuccess;
 
-    public string? SuccessMessage { get; set; }
+    public Error[] Errors { get; init; }
 
-    public string[] ErrorMessages { get; set; } = [];
-
-    public static Result Success(string? successMessage)
+    private Result(bool isSuccess, Error[] errors)
     {
-        return new(true)
-        {
-            SuccessMessage = successMessage,
-        };
+        _isSuccess = isSuccess;
+        Errors = errors;
     }
 
-    public static Result Fail(ErrorCode errorCode, string[] errorMessages)
-    {
-        return new(false)
-        {
-            ErrorCode = errorCode,
-            ErrorMessages = errorMessages
-        };
-    }
+    public static Result Success() => new(true, [Error.None]);
+
+    public static Result Failure(Error[] errors) => new(false, errors);
 }

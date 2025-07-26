@@ -18,7 +18,7 @@ public class GetAllUserQueryHandler(IBaseRepository<MasterUser> masterUserReposi
             WHERE IsDeleted = @IsDeleted
             """;
         var users = await _masterUserRepository.DapperQueryAsync<UserInfo>(sqlQuery, new { IsDeleted = false });
-        var result = Result<IList<UserInfo>>.Success(users, "Get all user successfully");
+        var result = Result<IList<UserInfo>>.Success(users);
         return result;
     }
 }

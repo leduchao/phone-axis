@@ -15,6 +15,6 @@ public class CreateCategoryCommandHandler(IBaseRepository<Domain.Entities.Catego
         await _categoryRepo.AddAsync(newCategory);
         await _unitOfWork.SaveChangesAsync();
 
-        return Result.Success("Category created successfully");
+        return Result.Success();
     }
 }

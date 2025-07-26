@@ -1,9 +1,7 @@
 ﻿using MediatR;
-using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.Auth;
 using PhoneAxis.Application.Interfaces.Services;
 using PhoneAxis.Domain.Common;
-using PhoneAxis.Domain.Enums;
 
 namespace PhoneAxis.Application.Queries.Auth;
 
@@ -15,15 +13,13 @@ public class SignInQueryHandler(IAuthService authService, IUserService userServi
     public async Task<Result<SignInResponse>> Handle(SignInQuery command, CancellationToken cancellationToken)
     {
         var signInResult = await _authService.SignInAsync(command);
-        if (signInResult.IsSuccess && signInResult.Data is not null)
+        if (signInResult.Succeeded && signInResult.Data is not null)
         {
             var userInfoResult = await _userService.GetUserBasicInforAsync(signInResult.Data.UserId);
-            return Result<SignInResponse>.Success(
-                new SignInResponse(signInResult.Data.TokenModel, userInfoResult.Data), 
-                AuthMessageConstant.SignInSuccess);
+            return Result<SignInResponse>.Success(new SignInResponse(signInResult.Data.TokenModel, userInfoResult.Data));
         }
 
-        return Result<SignInResponse>.Fail(ErrorCode.Unauthorized, signInResult.ErrorMessages);
+        return Result<SignInResponse>.Failure(signInResult.Errors);
 
     }
 }

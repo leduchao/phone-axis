@@ -23,6 +23,6 @@ public class CreateProductCommandHandler(IBaseRepository<Domain.Entities.Product
         await _productRepository.AddAsync(newProduct);
         await _unitOfWork.SaveChangesAsync();
 
-        return Result.Success("Product created successfully");
+        return Result.Success();
     }
 }

@@ -22,6 +22,6 @@ public class GetAllCategoryQueryHandler(IBaseRepository<Domain.Entities.Category
             sqlQuery, 
             new { IsDeleted = false });
 
-        return Result<IList<CategoryListItem>>.Success(categories, "Get all categories successfully");
+        return Result<IList<CategoryListItem>>.Success(categories);
     }
 }

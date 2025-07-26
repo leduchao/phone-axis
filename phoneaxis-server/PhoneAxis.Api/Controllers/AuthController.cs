@@ -6,6 +6,7 @@ using PhoneAxis.Api.Utils;
 using PhoneAxis.Application.Commands.Auth;
 using PhoneAxis.Application.Constants;
 using PhoneAxis.Application.DTOs.User;
+using PhoneAxis.Application.Errors;
 using PhoneAxis.Application.Queries.Auth;
 using PhoneAxis.Domain.Common;
 using PhoneAxis.Domain.Enums;
@@ -23,10 +24,10 @@ public class AuthController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> SignIn(SignInQuery query)
     {
         var result = await _mediator.Send(query);
-        if (!result.IsSuccess)
+        if (!result.Succeeded)
         {
             RemoveCookie(CookieKeyConstant.ACCESS_TOKEN);
-            return result.ToErrorActionResult();
+            return BadRequest(result);
         }
 
         else if (result.Data is not null && result.Data.TokenModel is not null)
@@ -34,26 +35,26 @@ public class AuthController(IMediator mediator) : ControllerBase
             SetCookie(CookieKeyConstant.ACCESS_TOKEN, result.Data.TokenModel.AccessToken, DateTimeOffset.UtcNow.AddDays(1.5));
             SetCookie(CookieKeyConstant.REFRESH_TOKEN, result.Data.TokenModel.RefreshToken, DateTimeOffset.UtcNow.AddDays(15));
 
-            return Ok(Result<UserBasicInfo>.Success(result.Data.UserInfo, result.SuccessMessage));
+            return Ok(Result<UserBasicInfo>.Success(result.Data.UserInfo));
         }
 
-        return BadRequest(Result.Fail(ErrorCode.Unauthorized, [AuthMessageConstant.SignInFail]));
+        return BadRequest(Result.Failure([AuthError.SignInFail]));
     }
 
     [HttpPost("sign-up")]
     public async Task<IActionResult> SignUp(SignUpCommand command)
     {
         var result = await _mediator.Send(command);
-        if (!result.IsSuccess) return result.ToErrorActionResult();
+        if (!result.Succeeded) return BadRequest(result);
 
-        return Created();
+        return Ok();
     }
 
     [HttpPost("sign-out")]
     public IActionResult SignOutUser()
     {
         RemoveCookie(CookieKeyConstant.ACCESS_TOKEN);
-        return Ok(Result.Success(AuthMessageConstant.SignOutSuccess));
+        return Ok(Result.Success());
     }
 
     [HttpPost("refresh-token")]
@@ -62,19 +63,19 @@ public class AuthController(IMediator mediator) : ControllerBase
         var refreshToken = GetCookie(CookieKeyConstant.REFRESH_TOKEN);
         if (string.IsNullOrEmpty(refreshToken))
         {
-            return Unauthorized(Result.Fail(ErrorCode.Unauthorized, [AuthMessageConstant.GetRefreshTokenFail]));
+            return Unauthorized(Result.Failure([AuthError.InvalidRefreshToken]));
         }
 
         var result = await _mediator.Send(new RefreshTokenCommand(refreshToken));
         if (result is null)
         {
-            return BadRequest(Result.Fail(ErrorCode.BadRequest, [AuthMessageConstant.RefreshTokenFail]));
+            return BadRequest(Result.Failure([AuthError.RefreshTokenFail]));
         }
 
         SetCookie(CookieKeyConstant.ACCESS_TOKEN, result.AccessToken, DateTimeOffset.UtcNow.AddDays(1.5));
         SetCookie(CookieKeyConstant.REFRESH_TOKEN, result.RefreshToken, DateTimeOffset.UtcNow.AddDays(15));
 
-        return Ok(Result.Success(AuthMessageConstant.RefreshTokenSuccess));
+        return Ok(Result.Success());
     }
 
     private string? GetCookie(string key)

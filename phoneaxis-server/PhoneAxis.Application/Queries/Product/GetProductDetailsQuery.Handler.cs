@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using PhoneAxis.Application.DTOs.Product;
+using PhoneAxis.Application.Errors;
 using PhoneAxis.Application.Interfaces;
 using PhoneAxis.Domain.Common;
 using PhoneAxis.Domain.Enums;
@@ -15,7 +16,7 @@ public partial class GetProductDetailsQueryHandler(IBaseRepository<Domain.Entiti
         var match = RegexHelper.SlugProductIdRegex().Match(request.Slug);
         if (!match.Success || !Guid.TryParse(match.Value, out var productId))
         {
-            return Result<ProductDetails>.Fail(ErrorCode.BadRequest, ["Invalid product URL"]);
+            return Result<ProductDetails>.Failure([ProductError.InvalidProductSlug]);
         }
 
         string sqlQuery = """
@@ -44,7 +45,7 @@ public partial class GetProductDetailsQueryHandler(IBaseRepository<Domain.Entiti
 
         if (rows is null || rows.Count == 0)
         {
-            return Result<ProductDetails>.Fail(ErrorCode.NotFound, ["Product not found"]);
+            return Result<ProductDetails>.Failure([ProductError.ProductNotFound]);
         }
 
         var result = new ProductDetails(
@@ -63,6 +64,6 @@ public partial class GetProductDetailsQueryHandler(IBaseRepository<Domain.Entiti
             rows[0].Sku, 
             rows[0].DiscountPercentage);
 
-        return Result<ProductDetails>.Success(result, "Get product details successfully");
+        return Result<ProductDetails>.Success(result);
     }
 }

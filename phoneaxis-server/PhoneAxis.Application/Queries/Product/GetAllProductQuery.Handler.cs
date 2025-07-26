@@ -30,6 +30,6 @@ public class GetAllProductQueryHandler(IBaseRepository<Domain.Entities.Product> 
             sqlQuery,
             new { IsDeleted = false });
 
-        return Result<IList<ProductListItem>>.Success(products, "Get all product successfully");
+        return Result<IList<ProductListItem>>.Success(products);
     }
 }

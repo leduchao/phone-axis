@@ -14,7 +14,7 @@ public static class AuthMessageConstant
     public const string InvalidPassword = "Invalid password";
     public const string InvalidCredentials = "Invalid credentials (email or username)";
     public const string UserNotFound = "User not found";
-    public const string UserAlreadyExists = "User already exists";
+    public const string UserExists = "User already exists";
 
     public const string SignUpSuccess = "User registered successfully";
     public const string SignUpFail = "User registered fail";

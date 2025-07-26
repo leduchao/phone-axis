@@ -12,6 +12,11 @@ public sealed class Result<TData>
 
     private Result(bool isSuccess, Error[] errors)
     {
+        if ((isSuccess && errors[0] != Error.None) || (!isSuccess && errors[0] == Error.None))
+        {
+            throw new ArgumentException("Invalid errors", nameof(errors));
+        }
+
         _isSuccess = isSuccess;
         Errors = errors;
     }
@@ -31,6 +36,11 @@ public sealed class Result
 
     private Result(bool isSuccess, Error[] errors)
     {
+        if ((isSuccess && errors[0] != Error.None) || (!isSuccess && errors[0] == Error.None))
+        {
+            throw new ArgumentException("Invalid errors", nameof(errors));
+        }
+
         _isSuccess = isSuccess;
         Errors = errors;
     }

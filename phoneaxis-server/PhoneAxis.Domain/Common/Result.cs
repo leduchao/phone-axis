@@ -12,7 +12,7 @@ public sealed class Result<TData>
 
     private Result(bool isSuccess, Error[] errors)
     {
-        if ((isSuccess && errors[0] != Error.None) || (!isSuccess && errors[0] == Error.None))
+        if ((isSuccess && errors.Length > 0) || (!isSuccess && errors.Length == 0))
         {
             throw new ArgumentException("Invalid errors", nameof(errors));
         }
@@ -21,7 +21,7 @@ public sealed class Result<TData>
         Errors = errors;
     }
 
-    public static Result<TData> Success(TData? data) => new(true, [Error.None]) { Data = data };
+    public static Result<TData> Success(TData? data) => new(true, []) { Data = data };
 
     public static Result<TData> Failure(Error[] errors) => new(false, errors);
 }
@@ -36,7 +36,7 @@ public sealed class Result
 
     private Result(bool isSuccess, Error[] errors)
     {
-        if ((isSuccess && errors[0] != Error.None) || (!isSuccess && errors[0] == Error.None))
+        if ((isSuccess && errors.Length > 0) || (!isSuccess && errors.Length == 0))
         {
             throw new ArgumentException("Invalid errors", nameof(errors));
         }
@@ -45,7 +45,7 @@ public sealed class Result
         Errors = errors;
     }
 
-    public static Result Success() => new(true, [Error.None]);
+    public static Result Success() => new(true, []);
 
     public static Result Failure(Error[] errors) => new(false, errors);
 }
